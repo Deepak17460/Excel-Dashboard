@@ -6,8 +6,8 @@ const fileValidator = require("./middlewares/fileValidation");
 const dirInit = require("./utils/dirInit");
 
 //Initilize dir to upload file
-dirInit();
 
+dirInit();
 const app = express();
 
 //Global middlewares
@@ -15,7 +15,8 @@ app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: false }));
 app.use("/api/spreadsheet", spreadsheetRoute);
-//HI hari
+
+// Multer file validation middleware
 app.use(fileValidator);
 
 const port = process.env.PORT || 8080;

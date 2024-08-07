@@ -1,15 +1,12 @@
 const fs = require("fs");
+const path = require('path');
 
+const dir = path.resolve(__dirname, '../public/temp');
+console.log(dir);
 const dirInit = () => {
-  const dir = "./public/temp";
-  try{
-    fs.existsSync(dir)
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
-  catch(e){
-    fs.mkdirSync(dir);
-  }
-//   if (!) {
-//   }
 };
 
 module.exports = dirInit
