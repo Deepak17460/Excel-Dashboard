@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../services/fileUpload.service");
+const {
+  getFileDetails,
+  getAllFileNames,
+} = require("../controllers/spreadsheetController");
 
-router.get("/filename", (req, res) => {});
+router.get("/", getAllFileNames);
 
-router.get("/", (req, res) => {});
+router.get("/:id", getFileDetails);
 
 router.post("/", upload.single("file"), (req, res) => {
   res.send("File uploaded");
