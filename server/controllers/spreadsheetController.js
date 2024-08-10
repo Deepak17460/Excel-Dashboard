@@ -1,5 +1,5 @@
 const path = require("path");
-const excelToJson = require("../utils/excelToJson");
+const { excelToJson, jsonToExcel } = require("../utils/excelToJson");
 const getFiles = require("../services/getAllFiles.service");
 
 const getFileDetails = async (req, res) => {
@@ -15,4 +15,16 @@ const getAllFileNames = async (req, res) => {
   res.json(ans);
 };
 
-module.exports = { getFileDetails, getAllFileNames };
+const editFileDetails = async (req, res) => {
+  const file = "../public/temp/" + req.query.fname;
+
+  const _path = path.join(__dirname, file);
+  const jsonData = excelToJson(_path, file);
+  if (jsonData.length > 0) {
+    jsonData[0].Name = "Wireless Earphones";
+  }
+  jsonToExcel(_path, jsonData);
+  res.send("Edit success!")
+};
+
+module.exports = { getFileDetails, getAllFileNames, editFileDetails };

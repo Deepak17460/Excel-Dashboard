@@ -4,6 +4,7 @@ const upload = require("../services/fileUpload.service");
 const {
   getFileDetails,
   getAllFileNames,
+  editFileDetails,
 } = require("../controllers/spreadsheetController");
 
 router.get("/", getAllFileNames);
@@ -14,7 +15,7 @@ router.post("/", upload.single("file"), (req, res) => {
   res.send("File uploaded");
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", editFileDetails);
 
 router.delete("/:id", (req, res) => {});
 
