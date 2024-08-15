@@ -5,6 +5,7 @@ const {
   getFileDetails,
   getAllFileNames,
   editFileDetails,
+  deleteFile,
 } = require("../controllers/spreadsheetController");
 
 router.get("/", getAllFileNames);
@@ -17,6 +18,6 @@ router.post("/", upload.single("file"), (req, res) => {
 
 router.put("/:id", editFileDetails);
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", deleteFile);
 
 module.exports = router;
