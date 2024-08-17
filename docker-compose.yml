@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: excel
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    networks:
+      - backend_network
+
+  node_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_HOST: mysql
+      DATABASE_USER: root
+      DATABASE_PASSWORD: 12345
+      DATABASE_NAME: excel
+    volumes:
+      - ./server:/usr/src/app
+    restart: always
+    networks:
+      - backend_network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  backend_network:
