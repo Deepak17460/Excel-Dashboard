@@ -13,7 +13,7 @@ router.get("/", getAllFileNames);
 router.get("/:id", getFileDetails);
 
 router.post("/", upload.single("file"), (req, res) => {
-  res.send("File uploaded");
+  res.send("File uploaded" + req.file.filename);
 });
 
 router.put("/:id", editFileDetails);
