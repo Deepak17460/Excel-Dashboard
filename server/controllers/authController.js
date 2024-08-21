@@ -29,7 +29,7 @@ const login = async (req, res, next) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch)
       return next(createError(400, "Username or password dosen't match"));
-    console.log(process.env.JWT_SECRET_KEY)
+    console.log(process.env.JWT_SECRET_KEY);
     const token = jwt.sign(
       { id: user.id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET_KEY

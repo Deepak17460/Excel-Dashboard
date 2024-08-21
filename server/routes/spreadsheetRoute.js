@@ -6,18 +6,18 @@ const {
   getAllFileNames,
   editFileDetails,
   deleteFile,
+  uploadFile,
 } = require("../controllers/spreadsheetController");
+const { verifyUser } = require("../utils/verifyToken");
 
 router.get("/", getAllFileNames);
 
-router.get("/:id", getFileDetails);
+router.get("/:id", verifyUser, getFileDetails);
 
-router.post("/", upload.single("file"), (req, res) => {
-  res.send("File uploaded" + req.file.filename);
-});
+router.post("/", verifyUser, upload.single("file"), uploadFile);
 
-router.put("/:id", editFileDetails);
+router.put("/:id", verifyUser, editFileDetails);
 
-router.delete("/:id", deleteFile);
+router.delete("/:id",verifyUser, deleteFile);
 
 module.exports = router;

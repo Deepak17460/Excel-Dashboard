@@ -1,7 +1,8 @@
 const path = require("path");
 const { excelToJson, jsonToExcel } = require("../utils/excelToJson");
 const getFiles = require("../services/getAllFiles.service");
-const fs = require('fs');
+const { UserToFiles } = require("../models");
+const fs = require("fs");
 
 const getFileDetails = async (req, res) => {
   const file = "../public/temp/" + req.query.fname;
@@ -14,6 +15,20 @@ const getFileDetails = async (req, res) => {
 const getAllFileNames = async (req, res) => {
   const ans = await getFiles();
   res.json(ans);
+};
+
+const uploadFile = async (req, res, next) => {
+  try {
+    await UserToFiles.create({
+      userId: req.user.id,
+      filename: req.file.filename,
+    });
+    res
+      .status(201)
+      .json("File: " + req.file.filename + " uploaded successfuly!");
+  } catch (error) {
+    next(error);
+  }
 };
 
 const editFileDetails = async (req, res) => {
@@ -58,4 +73,10 @@ const deleteFile = async (req, res) => {
   }
 };
 
-module.exports = { getFileDetails, getAllFileNames, editFileDetails, deleteFile };
+module.exports = {
+  getFileDetails,
+  getAllFileNames,
+  uploadFile,
+  editFileDetails,
+  deleteFile,
+};
