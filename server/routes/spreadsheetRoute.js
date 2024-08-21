@@ -10,7 +10,7 @@ const {
 } = require("../controllers/spreadsheetController");
 const { verifyUser } = require("../utils/verifyToken");
 
-router.get("/", getAllFileNames);
+router.get("/", verifyUser, getAllFileNames);
 
 router.get("/:id", verifyUser, getFileDetails);
 

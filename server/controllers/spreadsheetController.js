@@ -13,7 +13,8 @@ const getFileDetails = async (req, res) => {
 };
 
 const getAllFileNames = async (req, res) => {
-  const ans = await getFiles();
+  const userId = req.user.id;
+  const ans = await UserToFiles.findAll({ where: { userId } }); //getFiles();
   res.json(ans);
 };
 

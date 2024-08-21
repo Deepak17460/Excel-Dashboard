@@ -1,6 +1,6 @@
 const { User } = require("../models");
 const bcrypt = require("bcryptjs");
-const { createError } = require("../utils/errors.js");
+const createError = require("../utils/errors.js");
 const jwt = require("jsonwebtoken");
 
 const register = async (req, res, next) => {
@@ -23,7 +23,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
     if (!user) return next(createError(404, "User not found"));
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
