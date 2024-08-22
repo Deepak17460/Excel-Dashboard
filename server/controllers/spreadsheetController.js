@@ -1,20 +1,29 @@
 const path = require("path");
 const { excelToJson, jsonToExcel } = require("../utils/excelToJson");
-const getFiles = require("../services/getAllFiles.service");
+// const getFiles = require("../services/getAllFiles.service");
 const { UserToFiles } = require("../models");
 const fs = require("fs");
+const createError = require("../utils/errors");
 
-const getFileDetails = async (req, res) => {
-  const file = "../public/temp/" + req.query.fname;
+const getFileDetails = async (req, res, next) => {
+  try {
+    const recordId = req.params.id;
+    const filename = (await UserToFiles.findByPk(recordId)).filename;
+    // TODO save stack trace
+    // if (!fileRecord) return next(createError(404, "File not found"));
+    const file = "../public/temp/" + filename;
 
-  const _path = path.join(__dirname, file);
-  const jsonData = excelToJson(_path, file);
-  res.json(jsonData);
+    const _path = path.join(__dirname, file);
+    const jsonData = excelToJson(_path, file);
+    res.json(jsonData);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getAllFileNames = async (req, res) => {
   const userId = req.user.id;
-  const ans = await UserToFiles.findAll({ where: { userId } }); //getFiles();
+  const ans = await UserToFiles.findAll({ where: { userId } });
   res.json(ans);
 };
 
@@ -33,7 +42,10 @@ const uploadFile = async (req, res, next) => {
 };
 
 const editFileDetails = async (req, res) => {
-  const file = "../public/temp/" + req.query.fname;
+  const recordId = req.params.id;
+  const filename = (await UserToFiles.findByPk(recordId)).filename;
+  
+  const file = "../public/temp/" + filename;
 
   const _path = path.join(__dirname, file);
   const jsonData = req.body.data;
@@ -47,13 +59,15 @@ const editFileDetails = async (req, res) => {
 
 const deleteFile = async (req, res) => {
   try {
-    const fileName = req.query.fname;
+    const recordId = req.params.id;
+    const fileName = (await UserToFiles.findByPk(recordId)).filename;
 
     if (!fileName) {
       return res.status(400).send("File name is required");
     }
 
     const filePath = path.join(__dirname, "../public/temp/", fileName);
+    await UserToFiles.destroy({ where: { id:recordId } });
 
     // Check if the file exists
     if (fs.existsSync(filePath)) {
