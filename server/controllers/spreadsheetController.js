@@ -8,23 +8,28 @@ const createError = require("../utils/errors");
 const getFileDetails = async (req, res, next) => {
   try {
     const recordId = req.params.id;
-    const filename = (await UserToFiles.findByPk(recordId)).filename;
-    // TODO save stack trace
-    // if (!fileRecord) return next(createError(404, "File not found"));
+    const fileRecord = await UserToFiles.findByPk(recordId);
+    
+    if (!fileRecord) return next(createError(404, "File not found"));
+    const filename = fileRecord.filename
     const file = "../public/temp/" + filename;
 
     const _path = path.join(__dirname, file);
     const jsonData = excelToJson(_path, file);
-    res.json(jsonData);
+    res.status(200).json(jsonData);
   } catch (error) {
     next(error);
   }
 };
 
-const getAllFileNames = async (req, res) => {
-  const userId = req.user.id;
-  const ans = await UserToFiles.findAll({ where: { userId } });
-  res.json(ans);
+const getAllFileNames = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const ans = await UserToFiles.findAll({ where: { userId } });
+    res.json(ans);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const uploadFile = async (req, res, next) => {
@@ -41,33 +46,40 @@ const uploadFile = async (req, res, next) => {
   }
 };
 
-const editFileDetails = async (req, res) => {
-  const recordId = req.params.id;
-  const filename = (await UserToFiles.findByPk(recordId)).filename;
-  
-  const file = "../public/temp/" + filename;
-
-  const _path = path.join(__dirname, file);
-  const jsonData = req.body.data;
-  // const jsonData = excelToJson(_path, file);
-  // if (jsonData.length > 0) {
-  //   jsonData[0].Name = "Wireless Earphones";
-  // }
-  jsonToExcel(_path, jsonData);
-  res.send("Edit success!");
-};
-
-const deleteFile = async (req, res) => {
+const editFileDetails = async (req, res, next) => {
   try {
     const recordId = req.params.id;
-    const fileName = (await UserToFiles.findByPk(recordId)).filename;
+    const fileRecord = await UserToFiles.findByPk(recordId);
+    
+    if (!fileRecord) return next(createError(404, "File not found"));
+    const filename = fileRecord.filename
+
+    const file = "../public/temp/" + filename;
+
+    const _path = path.join(__dirname, file);
+    const jsonData = req.body.data;
+
+    jsonToExcel(_path, jsonData);
+    res.send("Edit success!");
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteFile = async (req, res, next) => {
+  try {
+    const recordId = req.params.id;
+    const fileRecord = await UserToFiles.findByPk(recordId);
+    
+    if (!fileRecord) return next(createError(404, "File not found"));
+    const fileName = fileRecord.filename
 
     if (!fileName) {
       return res.status(400).send("File name is required");
     }
 
     const filePath = path.join(__dirname, "../public/temp/", fileName);
-    await UserToFiles.destroy({ where: { id:recordId } });
+    await UserToFiles.destroy({ where: { id: recordId } });
 
     // Check if the file exists
     if (fs.existsSync(filePath)) {
@@ -83,8 +95,23 @@ const deleteFile = async (req, res) => {
       res.status(404).send("File not found");
     }
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Internal server error");
+    next(error);
+  }
+};
+
+const convertToJson = async (req, res, next) => {
+  try {
+    const recordId = req.params.id;
+    const fileRecord = await UserToFiles.findByPk(recordId);
+    
+    if (!fileRecord) return next(createError(404, "File not found"));
+    const filename = fileRecord.filename
+
+    const _path = path.join(__dirname, "../public/temp/" + filename);
+
+    res.status(200).json(excelToJson(_path, file));
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -94,4 +121,5 @@ module.exports = {
   uploadFile,
   editFileDetails,
   deleteFile,
+  convertToJson,
 };
