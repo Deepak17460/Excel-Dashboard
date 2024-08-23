@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const spreadsheetRoute = require("./routes/spreadsheetRoute");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
+const changeFormatRoute = require("./routes/changeFormatRoute");
 require("dotenv").config();
 const fileValidator = require("./middlewares/fileValidation");
 const dirInit = require("./utils/dirInit");
@@ -22,7 +23,10 @@ app.use(express.urlencoded({ limit: "10mb", extended: false }));
 app.use("/api/users", userRoute);
 app.use("/api/spreadsheet", spreadsheetRoute);
 app.use("/api", authRoute);
+app.use("/api/format", changeFormatRoute);
 
+
+//Global Error Handler
 app.use((err, req, res, next) => {
   const errStatus = err.status || 500;
   const errMsg = err.message || "Something went wrong";

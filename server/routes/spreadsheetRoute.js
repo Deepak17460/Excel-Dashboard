@@ -7,6 +7,7 @@ const {
   editFileDetails,
   deleteFile,
   uploadFile,
+  convertToJson,
 } = require("../controllers/spreadsheetController");
 const { verifyUser } = require("../utils/verifyToken");
 

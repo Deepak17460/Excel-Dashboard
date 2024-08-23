@@ -109,7 +109,7 @@ const convertToJson = async (req, res, next) => {
 
     const _path = path.join(__dirname, "../public/temp/" + filename);
 
-    res.status(200).json(excelToJson(_path, file));
+    res.status(200).json(excelToJson(_path, ''));
   } catch (error) {
     next(error);
   }
