@@ -13,7 +13,8 @@ const { verifyUser } = require("../utils/verifyToken");
 
 router.get("/", verifyUser, getAllFileNames);
 
-router.get("/:id", verifyUser, getFileDetails);
+// router.get("/:id", verifyUser, getFileDetails);
+router.get("/:id", getFileDetails);
 
 router.post("/", verifyUser, upload.single("file"), uploadFile);
 
