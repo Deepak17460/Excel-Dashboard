@@ -9,10 +9,13 @@ import Paper from "@mui/material/Paper";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
-const URI = "http://localhost:8081/api/spreadsheet/1";
+const URI = "http://localhost:8081/api/spreadsheet/";
 
 function BasicTable(props) {
+  const { id } = useParams();
+  
   const initialRows = props.rows.map((row) => row.id);
   const initialCols = Object.keys(props.rows[0]).filter((key) => key !== "id");
   const initialData = props.rows.reduce((acc, row) => {
@@ -22,6 +25,7 @@ function BasicTable(props) {
   const [rows, setRows] = useState(initialRows);
   const [cols, setCols] = useState(initialCols);
   const [data, setData] = useState(initialData);
+
 
   const addRow = () => {
     const newRow = rows.length + 1;
@@ -47,19 +51,13 @@ function BasicTable(props) {
     setData({ ...data, [row]: { ...data[row], [col]: value } });
   };
 
-  // const handleClick = (id) => {
-  //   alert(id);
-  // };
-  
-  // TODO: 
   const deleteRow = async (rowId) => {
     try {
       const updatedRows = rows.filter((row) => row !== rowId);
       setRows(updatedRows);
 
       const { [rowId]: deletedRow, ...remainingData } = data;
-      console.log({ "Deleted Row ": deletedRow });
-      // await axios.delete(URI, rowId);
+      // console.log({ "Deleted Row ": deletedRow });
       setData(remainingData);
     } catch (err) {
       console.log(err);
@@ -78,7 +76,7 @@ function BasicTable(props) {
       });
       console.log({ data: payload });
       const res = await axios.put(
-        URI,
+        URI + id,
         { data: payload },
         { withCredentials: true }
       );

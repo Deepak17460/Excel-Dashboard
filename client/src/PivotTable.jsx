@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BasicTable from "./Table";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
-const PivotTable = ({ file }) => {
-  let cols = [];
+const URI = "http://localhost:8081/api/spreadsheet/";
+
+const PivotTable = () => {
+  const [file, setFile] = useState([]);
   let rows = [];
-  
-  Object.keys(file[0]).map((item) => cols.push(item));
+  const { id } = useParams();
+
+  useEffect(() => {
+    const getData = async (URI) => {
+      try {
+        const data = (await axios.get(URI, { withCredentials: true })).data;
+        setFile(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getData(URI + id);
+    return () => {};
+  }, []);
 
   file.map((item, id) => {
     let newItem = { id };
@@ -14,7 +31,12 @@ const PivotTable = ({ file }) => {
     );
     rows = [...rows, newItem];
   });
-  return <div>{file && <BasicTable rows={rows} cols={cols} />}</div>;
+
+  return (
+    <div>
+      {file.length > 0 ? <BasicTable rows={rows} /> : <h1>Error ...</h1>}
+    </div>
+  );
 };
 
 export default PivotTable;
