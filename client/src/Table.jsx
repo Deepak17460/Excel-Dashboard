@@ -13,21 +13,25 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 const URI = "http://localhost:8081/api/spreadsheet/";
+let colCounter;
 
 function BasicTable(props) {
   const { id } = useParams();
-
+  
   const initialRows = props.rows.map((row) => row.id);
   const initialCols = Object.keys(props.rows[0]).filter((key) => key !== "id");
   const initialData = props.rows.reduce((acc, row) => {
     acc[row.id] = { ...row };
     return acc;
   }, {});
+  
+  
+
   const [rows, setRows] = useState(initialRows);
   const [cols, setCols] = useState(initialCols);
   const [data, setData] = useState(initialData);
-  // console.log(data)
-
+  console.log(data);
+  
   const inputRefs = useRef([]);
   const focusIndex = useRef(null);
 
@@ -37,6 +41,10 @@ function BasicTable(props) {
       focusIndex.current = null; // Reset the focusIndex after focusing
     }
   });
+
+  useEffect(()=>{
+    colCounter = cols.length + 1;
+  }, [])
 
   const addRow = () => {
     const newRow = rows.length > 0 ? rows[rows.length - 1] + 1 : 0;
@@ -48,7 +56,11 @@ function BasicTable(props) {
   };
 
   const addCol = () => {
-    const newCol = '';
+    let newCol = "Col ";
+    if (cols.length === 0) colCounter = 1;
+
+    newCol += colCounter;
+    colCounter += 1;
     setCols([...cols, newCol]);
     setData(
       rows.reduce(
