@@ -26,6 +26,7 @@ function BasicTable(props) {
   const [rows, setRows] = useState(initialRows);
   const [cols, setCols] = useState(initialCols);
   const [data, setData] = useState(initialData);
+  // console.log(data)
 
   const inputRefs = useRef([]);
   const focusIndex = useRef(null);
@@ -38,7 +39,7 @@ function BasicTable(props) {
   });
 
   const addRow = () => {
-    const newRow = rows.length + 1;
+    const newRow = rows.length > 0 ? rows[rows.length - 1] + 1 : 0;
     setRows([...rows, newRow]);
     setData({
       ...data,

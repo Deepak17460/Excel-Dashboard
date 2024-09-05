@@ -22,7 +22,7 @@ const PivotTable = () => {
 
     getData(URI + id);
     return () => {};
-  }, []);
+  }, [id]);
 
   file.map((item, id) => {
     let newItem = { id };
@@ -30,6 +30,7 @@ const PivotTable = () => {
       (key) => (newItem = { ...newItem, [key]: item[key] })
     );
     rows = [...rows, newItem];
+    return null;
   });
 
   return (
