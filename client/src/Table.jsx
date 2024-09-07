@@ -17,21 +17,19 @@ let colCounter;
 
 function BasicTable(props) {
   const { id } = useParams();
-  
+
   const initialRows = props.rows.map((row) => row.id);
   const initialCols = Object.keys(props.rows[0]).filter((key) => key !== "id");
   const initialData = props.rows.reduce((acc, row) => {
     acc[row.id] = { ...row };
     return acc;
   }, {});
-  
-  
 
   const [rows, setRows] = useState(initialRows);
   const [cols, setCols] = useState(initialCols);
   const [data, setData] = useState(initialData);
   console.log(data);
-  
+
   const inputRefs = useRef([]);
   const focusIndex = useRef(null);
 
@@ -42,12 +40,13 @@ function BasicTable(props) {
     }
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     colCounter = cols.length + 1;
-  }, [])
+  }, []);
 
   const addRow = () => {
     const newRow = rows.length > 0 ? rows[rows.length - 1] + 1 : 0;
+    if (cols.length === 0) addCol();
     setRows([...rows, newRow]);
     setData({
       ...data,
@@ -58,7 +57,7 @@ function BasicTable(props) {
   const addCol = () => {
     let newCol = "Col ";
     if (cols.length === 0) colCounter = 1;
-
+    
     newCol += colCounter;
     colCounter += 1;
     setCols([...cols, newCol]);
@@ -68,6 +67,7 @@ function BasicTable(props) {
         {}
       )
     );
+    // if (rows.length === 0) addRow();
   };
 
   const handleEdit = (row, col, value) => {
@@ -102,8 +102,13 @@ function BasicTable(props) {
   };
 
   const deleteCol = (colId) => {
-    // const updatedCols = cols.filter((col) => col !== colId);
-    // setCols(updatedCols);
+    if (cols.length === 1) {
+      setRows([]);
+      setCols([]);
+      setData({});
+      return;
+    }
+
     const colIndex = cols.indexOf(colId);
 
     if (colIndex > -1) {
@@ -151,7 +156,7 @@ function BasicTable(props) {
       <button onClick={addCol}>Add Column</button>
       <button onClick={handleSave}>Save</button>
       <button onClick={handleSubmit}>Submit</button>
-      {/* {console.log(data)} */}
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
