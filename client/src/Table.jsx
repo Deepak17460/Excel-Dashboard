@@ -58,6 +58,8 @@ function BasicTable(props) {
     let newCol = "Col ";
     if (cols.length === 0) colCounter = 1;
     
+    colCounter = Number(cols[cols.length - 1].split(' ')[1]) + 1
+    
     newCol += colCounter;
     colCounter += 1;
     setCols([...cols, newCol]);
