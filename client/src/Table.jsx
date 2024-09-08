@@ -57,9 +57,8 @@ function BasicTable(props) {
   const addCol = () => {
     let newCol = "Col ";
     if (cols.length === 0) colCounter = 1;
-    
-    colCounter = Number(cols[cols.length - 1].split(' ')[1]) + 1
-    
+    else colCounter = Number(cols[cols.length - 1].split(" ")[1]) + 1;
+
     newCol += colCounter;
     colCounter += 1;
     setCols([...cols, newCol]);
@@ -136,11 +135,13 @@ function BasicTable(props) {
 
   const handleSubmit = async () => {
     try {
+      if (Object.keys(data).length === 0) return;
+
       const payload = Object.values(data).map((item) => {
         const { id, ...rest } = item;
         return rest;
       });
-      console.log({ data: payload });
+
       const res = await axios.put(
         URI + id,
         { data: payload },
