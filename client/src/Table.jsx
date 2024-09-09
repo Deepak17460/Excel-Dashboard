@@ -15,6 +15,10 @@ import { useEffect } from "react";
 const URI = "http://localhost:8081/api/spreadsheet/";
 let colCounter;
 
+const getUID = () => {
+  return "###" + Date.now().toString();
+};
+
 function BasicTable(props) {
   const { id } = useParams();
 
@@ -48,24 +52,25 @@ function BasicTable(props) {
     const newRow = rows.length > 0 ? rows[rows.length - 1] + 1 : 0;
     if (cols.length === 0) addCol();
     let prevRowId;
-    if(rows.length == 0)
-      prevRowId = -1
-    else
-      prevRowId = Number(data[rows[rows.length - 1]].id)
+    if (rows.length == 0) prevRowId = -1;
+    else prevRowId = Number(data[rows[rows.length - 1]].id);
     setRows([...rows, newRow]);
     setData({
       ...data,
-      [newRow]: cols.reduce((acc, col) => ({ ...acc, [col]: "" }), {id: prevRowId+1}),
+      [newRow]: cols.reduce((acc, col) => ({ ...acc, [col]: "" }), {
+        id: prevRowId + 1,
+      }),
     });
   };
 
   const addCol = () => {
     let newCol = "Col ";
-    if (cols.length === 0) colCounter = 1;
-    else colCounter = Number(cols[cols.length - 1].split(" ")[1]) + 1;
-
-    newCol += colCounter;
-    colCounter += 1;
+    // if (cols.length === 0) colCounter = 1;
+    // else colCounter = Number(cols[cols.length - 1].split(" ")[1]) + 1;
+    // console.log(getUID())
+    // newCol += colCounter;
+    // colCounter += 1;
+    newCol = getUID();
     setCols([...cols, newCol]);
     setData(
       rows.reduce(
@@ -169,23 +174,46 @@ function BasicTable(props) {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              {cols.map((col, index) => (
-                <TableCell key={col}>
-                  <input
-                    type="text"
-                    value={col}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    onChange={(e) => handleColEdit(index, e.target.value)}
-                  />{" "}
-                  <Button
-                    onClick={() => deleteCol(col)}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              ))}
+              {cols.map((col, index) => {
+                if (col.startsWith("###")) {
+                  return (
+                    <TableCell key={col}>
+                      <input
+                        type="text"
+                        // value={col}
+                        placeholder="Enter Column Name"
+                        ref={(el) => (inputRefs.current[index] = el)}
+                        onChange={(e) => handleColEdit(index, e.target.value)}
+                      />{" "}
+                      <Button
+                        onClick={() => deleteCol(col)}
+                        variant="contained"
+                        color="secondary"
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  );
+                } else {
+                  return (
+                    <TableCell key={col}>
+                      <input
+                        type="text"
+                        value={col}
+                        ref={(el) => (inputRefs.current[index] = el)}
+                        onChange={(e) => handleColEdit(index, e.target.value)}
+                      />{" "}
+                      <Button
+                        onClick={() => deleteCol(col)}
+                        variant="contained"
+                        color="secondary"
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  );
+                }
+              })}
             </TableRow>
           </TableHead>
           <TableBody>
