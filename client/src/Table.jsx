@@ -47,10 +47,15 @@ function BasicTable(props) {
   const addRow = () => {
     const newRow = rows.length > 0 ? rows[rows.length - 1] + 1 : 0;
     if (cols.length === 0) addCol();
+    let prevRowId;
+    if(rows.length == 0)
+      prevRowId = -1
+    else
+      prevRowId = Number(data[rows[rows.length - 1]].id)
     setRows([...rows, newRow]);
     setData({
       ...data,
-      [newRow]: cols.reduce((acc, col) => ({ ...acc, [col]: "" }), {}),
+      [newRow]: cols.reduce((acc, col) => ({ ...acc, [col]: "" }), {id: prevRowId+1}),
     });
   };
 
@@ -97,7 +102,7 @@ function BasicTable(props) {
     const updatedRows = rows.filter((row) => row !== rowId);
     setRows(updatedRows);
 
-    const { [rowId]: deletedRow, ...remainingData } = data;
+    const { [rowId]: _, ...remainingData } = data;
 
     setData(remainingData);
   };
