@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const URI = "http://localhost:8081/api/login";
 
@@ -9,18 +10,18 @@ const Login = () => {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // console.log(name, val);
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
-    // console.log(user);
     try {
       const res = await axios.post(URI, user, { withCredentials: true });
-      console.log(res);
+      navigate("/");
     } catch (err) {
       console.log(err);
     }
