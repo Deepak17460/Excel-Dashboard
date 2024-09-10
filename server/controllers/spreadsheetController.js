@@ -9,9 +9,15 @@ const getFileDetails = async (req, res, next) => {
   try {
     const recordId = req.params.id;
     const fileRecord = await UserToFiles.findByPk(recordId);
-    
+
     if (!fileRecord) return next(createError(404, "File not found"));
-    const filename = fileRecord.filename
+
+    const filename = fileRecord.filename;
+    const userId = fileRecord.userId;
+    console.log(req.user.id, userId);
+    if (req.user.id !== userId)
+      return next(createError(403, "You don't have the required permission"));
+
     const file = "../public/temp/" + filename;
 
     const _path = path.join(__dirname, file);
@@ -50,9 +56,9 @@ const editFileDetails = async (req, res, next) => {
   try {
     const recordId = req.params.id;
     const fileRecord = await UserToFiles.findByPk(recordId);
-    
+
     if (!fileRecord) return next(createError(404, "File not found"));
-    const filename = fileRecord.filename
+    const filename = fileRecord.filename;
 
     const file = "../public/temp/" + filename;
 
@@ -70,9 +76,9 @@ const deleteFile = async (req, res, next) => {
   try {
     const recordId = req.params.id;
     const fileRecord = await UserToFiles.findByPk(recordId);
-    
+
     if (!fileRecord) return next(createError(404, "File not found"));
-    const fileName = fileRecord.filename
+    const fileName = fileRecord.filename;
 
     if (!fileName) {
       return res.status(400).send("File name is required");
@@ -103,13 +109,13 @@ const convertToJson = async (req, res, next) => {
   try {
     const recordId = req.params.id;
     const fileRecord = await UserToFiles.findByPk(recordId);
-    
+
     if (!fileRecord) return next(createError(404, "File not found"));
-    const filename = fileRecord.filename
+    const filename = fileRecord.filename;
 
     const _path = path.join(__dirname, "../public/temp/" + filename);
 
-    res.status(200).json(excelToJson(_path, ''));
+    res.status(200).json(excelToJson(_path, ""));
   } catch (error) {
     next(error);
   }

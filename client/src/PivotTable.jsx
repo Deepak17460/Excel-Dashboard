@@ -7,6 +7,8 @@ const URI = "http://localhost:8081/api/spreadsheet/";
 
 const PivotTable = () => {
   const [file, setFile] = useState([]);
+  const [errMsg, setErrMsg] = useState("");
+
   let rows = [];
   const { id } = useParams();
 
@@ -16,7 +18,7 @@ const PivotTable = () => {
         const data = (await axios.get(URI, { withCredentials: true })).data;
         setFile(data);
       } catch (err) {
-        console.log(err);
+        setErrMsg(err.response.data.message);
       }
     };
 
@@ -35,7 +37,7 @@ const PivotTable = () => {
 
   return (
     <div>
-      {file.length > 0 ? <BasicTable rows={rows} /> : <h1>Error ...</h1>}
+      {file.length > 0 ? <BasicTable rows={rows} /> : <h1>{errMsg} ...</h1>}
     </div>
   );
 };
