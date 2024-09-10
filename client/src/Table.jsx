@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 const URI = "http://localhost:8081/api/spreadsheet/";
-let colCounter;
+// let colCounter;
 
 const getUID = () => {
   return "###" + Date.now().toString();
@@ -44,15 +44,15 @@ function BasicTable(props) {
     }
   });
 
-  useEffect(() => {
-    colCounter = cols.length + 1;
-  }, []);
+  // useEffect(() => {
+  //   colCounter = cols.length + 1;
+  // }, []);
 
   const addRow = () => {
     const newRow = rows.length > 0 ? rows[rows.length - 1] + 1 : 0;
     if (cols.length === 0) addCol();
     let prevRowId;
-    if (rows.length == 0) prevRowId = -1;
+    if (rows.length === 0) prevRowId = -1;
     else prevRowId = Number(data[rows[rows.length - 1]].id);
     setRows([...rows, newRow]);
     setData({
