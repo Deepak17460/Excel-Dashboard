@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const URL = "http://localhost:8081/api/spreadsheet";
 const validMimeTypes = [
@@ -9,6 +10,7 @@ const validMimeTypes = [
 
 const UploadFileForm = () => {
   const [file, setFile] = useState(null);
+  const navigate = useNavigate();
 
   // console.log(file);
   const handleChange = (e) => {
@@ -31,6 +33,7 @@ const UploadFileForm = () => {
         },
       });
       console.log(res.data);
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

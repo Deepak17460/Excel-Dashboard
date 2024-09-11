@@ -42,13 +42,24 @@ const Home = () => {
     navigate("/table/" + id);
   };
 
+  const deleteRow = async (id) => {
+    try {
+      const res = await axios.delete(URI + "/" + id, { withCredentials: true });
+      console.log(res.data);
+      const newData = files.filter((item) => item.id !== id);
+      setFiles(newData);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
-            {["Name", "File", "Last Modified", "Actions"].map((item) => (
-              <TableCell>
+            {["S. No. ", "File", "Last Modified", "Actions"].map((item, i) => (
+              <TableCell key={i}>
                 <h1>{item}</h1>
               </TableCell>
             ))}
@@ -56,11 +67,11 @@ const Home = () => {
         </TableHead>
         <TableBody>
           {files.length > 0 ? (
-            files.map((item) => {
+            files.map((item, i) => {
               return (
                 <TableRow key={item.id}>
                   <TableCell onClick={() => handleClick(item.id)}>
-                    <h2>{item.id}</h2>
+                    <h2>{i+1}</h2>
                   </TableCell>
                   <TableCell onClick={() => handleClick(item.id)}>
                     <h2>{item.filename}</h2>
@@ -69,21 +80,27 @@ const Home = () => {
                     <h2>{formatDate(item.updatedAt)}</h2>
                   </TableCell>
                   <TableCell>
-                    <DeleteForeverRoundedIcon color="error" fontSize="large" />
+                    <DeleteForeverRoundedIcon
+                      onClick={() => deleteRow(item.id)}
+                      color="error"
+                      fontSize="large"
+                    />
                   </TableCell>
                 </TableRow>
               );
             })
           ) : (
-            <div>
-              <h2>Nothing to show :(</h2>
-              <Link to="/login">
-                <Button variant="contained" color="success">
-                  Login
-                </Button>
-              </Link>
-              <h2>{errMsg}</h2>
-            </div>
+            <TableRow>
+              <TableCell>
+                <h2>Nothing to show :(</h2>
+                <Link to="/login">
+                  <Button variant="contained" color="success">
+                    Login
+                  </Button>
+                </Link>
+                <h2>{errMsg}</h2>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>
