@@ -6,6 +6,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
 import axios from "axios";
@@ -19,6 +20,18 @@ const URI = "http://localhost:8081/api/spreadsheet";
 const Home = () => {
   const [files, setFiles] = useState([]);
   const [errMsg, setErrMsg] = useState("");
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   const navigate = useNavigate();
 
@@ -54,57 +67,76 @@ const Home = () => {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {["S. No. ", "File", "Last Modified", "Actions"].map((item, i) => (
-              <TableCell key={i}>
-                <h1>{item}</h1>
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {files.length > 0 ? (
-            files.map((item, i) => {
-              return (
-                <TableRow key={item.id}>
-                  <TableCell onClick={() => handleClick(item.id)}>
-                    <h2>{i+1}</h2>
-                  </TableCell>
-                  <TableCell onClick={() => handleClick(item.id)}>
-                    <h2>{item.filename}</h2>
-                  </TableCell>
-                  <TableCell>
-                    <h2>{formatDate(item.updatedAt)}</h2>
-                  </TableCell>
-                  <TableCell>
-                    <DeleteForeverRoundedIcon
-                      onClick={() => deleteRow(item.id)}
-                      color="error"
-                      fontSize="large"
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })
-          ) : (
+    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      <TableContainer sx={{ maxHeight: 415 }}>
+        <Table stickyHeader size="small" aria-label="sticky table">
+          <TableHead>
             <TableRow>
-              <TableCell>
-                <h2>Nothing to show :(</h2>
-                <Link to="/login">
-                  <Button variant="contained" color="success">
-                    Login
-                  </Button>
-                </Link>
-                <h2>{errMsg}</h2>
-              </TableCell>
+              {["S. No. ", "File", "Last Modified", "Actions"].map(
+                (item, i) => (
+                  <TableCell
+                    key={i}
+                    // align={column.align}
+                    // style={{ minWidth: column.minWidth }}
+                  >
+                    <h2>{item}</h2>
+                  </TableCell>
+                )
+              )}
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {files.length > 0 ? (
+              files
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((item, i) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={item.id}>
+                      <TableCell onClick={() => handleClick(item.id)}>
+                        <h3>{item.id}</h3>
+                      </TableCell>
+                      <TableCell onClick={() => handleClick(item.id)}>
+                        <h3>{item.filename}</h3>
+                      </TableCell>
+                      <TableCell>
+                        <h3>{formatDate(item.updatedAt)}</h3>
+                      </TableCell>
+                      <TableCell>
+                        <DeleteForeverRoundedIcon
+                          onClick={() => deleteRow(item.id)}
+                          color="error"
+                          fontSize="large"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            ) : (
+              <TableRow>
+                <TableCell>
+                  <h3>Nothing to show :(</h3>
+                  <Link to="/login">
+                    <Button variant="contained" color="success">
+                      Login
+                    </Button>
+                  </Link>
+                  <h3>{errMsg}</h3>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 100]}
+        component="div"
+        count={files.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
   );
 };
 
