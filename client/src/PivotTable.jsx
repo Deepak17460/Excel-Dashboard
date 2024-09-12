@@ -3,7 +3,7 @@ import BasicTable from "./Table";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const URI = "http://localhost:8081/api/spreadsheet/";
+const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 
 const PivotTable = () => {
   const [file, setFile] = useState([]);
@@ -13,16 +13,16 @@ const PivotTable = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    const getData = async (URI) => {
+    const getData = async (URL) => {
       try {
-        const data = (await axios.get(URI, { withCredentials: true })).data;
+        const data = (await axios.get(URL, { withCredentials: true })).data;
         setFile(data);
       } catch (err) {
         setErrMsg(err.response.data.message);
       }
     };
 
-    getData(URI + id);
+    getData(URL + "/" + id);
     return () => {};
   }, [id]);
 

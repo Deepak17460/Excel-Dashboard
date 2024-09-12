@@ -12,7 +12,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
-const URI = "http://localhost:8081/api/spreadsheet/";
+const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 // let colCounter;
 
 const getUID = () => {
@@ -153,7 +153,7 @@ function BasicTable(props) {
       });
 
       const res = await axios.put(
-        URI + id,
+        URL +'/' + id,
         { data: payload },
         { withCredentials: true }
       );

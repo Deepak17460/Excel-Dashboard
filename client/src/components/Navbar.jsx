@@ -3,7 +3,7 @@ import axios from "axios";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const URL = "http://localhost:8081/api/logout/";
+const URL = `${process.env.REACT_APP_SERVER_URL}/logout`;
 
 const Navbar = () => {
   const navigate = useNavigate();

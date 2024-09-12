@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const URI = "http://localhost:8081/api/login";
+const URL = `${process.env.REACT_APP_SERVER_URL}/login`;
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -20,7 +20,7 @@ const Login = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(URI, user, { withCredentials: true });
+      const res = await axios.post(URL, user, { withCredentials: true });
       navigate("/");
     } catch (err) {
       console.log(err);

@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import formatDate from "../utils/dateFormat";
 
-const URI = "http://localhost:8081/api/spreadsheet";
+const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 
 const Home = () => {
   const [files, setFiles] = useState([]);
@@ -43,7 +43,7 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(URI, { withCredentials: true });
+      const res = await axios.get(URL, { withCredentials: true });
       setFiles(res.data);
     } catch (error) {
       console.log(error.response.data);
@@ -57,7 +57,7 @@ const Home = () => {
 
   const deleteRow = async (id) => {
     try {
-      const res = await axios.delete(URI + "/" + id, { withCredentials: true });
+      const res = await axios.delete(URL + "/" + id, { withCredentials: true });
       console.log(res.data);
       const newData = files.filter((item) => item.id !== id);
       setFiles(newData);

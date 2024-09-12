@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const URL = "http://localhost:8081/api/spreadsheet";
+const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 const validMimeTypes = [
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   "text/csv",

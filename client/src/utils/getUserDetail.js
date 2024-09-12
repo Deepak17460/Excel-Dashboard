@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL = "http://localhost:8081/api/users";
+const URL = `${process.env.REACT_APP_SERVER_URL}/users`;
 
 async function getUser(id) {
   try {
