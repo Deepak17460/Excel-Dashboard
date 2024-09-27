@@ -13,7 +13,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/upload" element={<UploadFileForm />} />
-        <Route path="/table/:id" element={<PivotTable />} />
+        <Route path="/view/:id" element={<PivotTable isEditMode={false} />} />
+        <Route path="/edit/:id" element={<PivotTable isEditMode={true} />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </div>

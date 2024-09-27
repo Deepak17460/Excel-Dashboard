@@ -11,6 +11,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 // let colCounter;
@@ -32,7 +33,8 @@ function BasicTable(props) {
   const [rows, setRows] = useState(initialRows);
   const [cols, setCols] = useState(initialCols);
   const [data, setData] = useState(initialData);
-  console.log(data);
+
+  const [isEditMode, setIsEditMode] = useState(props.isEditMode);
 
   const inputRefs = useRef([]);
   const focusIndex = useRef(null);
@@ -153,66 +155,110 @@ function BasicTable(props) {
       });
 
       const res = await axios.put(
-        URL +'/' + id,
+        URL + "/" + id,
         { data: payload },
         { withCredentials: true }
       );
       console.log(res);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsEditMode(false);
     }
+  };
+
+  const renderTableHeader = (col, index, fn) => {
+    if (isEditMode) {
+      if (col.startsWith("###")) {
+        return (
+          <TableCell key={col}>
+            <input
+              type="text"
+              placeholder="Enter Column Name"
+              ref={(el) => (inputRefs.current[index] = el)}
+              onChange={fn}
+            />{" "}
+            {isEditMode ? (
+              <Button
+                onClick={() => deleteCol(col)}
+                variant="contained"
+                color="error"
+              >
+                Delete
+              </Button>
+            ) : (
+              ""
+            )}
+          </TableCell>
+        );
+      } else {
+        return (
+          <TableCell key={col}>
+            <input
+              type="text"
+              value={col}
+              ref={(el) => (inputRefs.current[index] = el)}
+              onChange={fn}
+            />{" "}
+            {isEditMode ? (
+              <DeleteRoundedIcon
+                onClick={() => deleteCol(col)}
+                fontSize="large"
+                color="error"
+              >
+                Delete
+              </DeleteRoundedIcon>
+            ) : (
+              ""
+            )}
+          </TableCell>
+        );
+      }
+    } else {
+      return (
+        <TableCell key={col}>
+          <h3>{col}</h3>
+        </TableCell>
+      );
+    }
+  };
+
+  const renderTableCell = (row, col, fn) => {
+    if (isEditMode) {
+      return <input type="text" value={data[row][col] || ""} onChange={fn} />;
+    } else {
+      return <h3>{data[row][col] || ""}</h3>;
+    }
+  };
+
+  const handleEditClick = () => {
+    setIsEditMode(true);
   };
 
   return (
     <>
-      <button onClick={addRow}>Add Row</button>
-      <button onClick={addCol}>Add Column</button>
-      <button onClick={handleSave}>Save</button>
-      <button onClick={handleSubmit}>Submit</button>
-
+      {isEditMode ? (
+        <>
+          <Button variant="contained" color="success" onClick={addRow}>Add Row</Button>
+          <Button variant="contained" color="success" onClick={addCol}>Add Column</Button>
+          <Button variant="contained" color="success" onClick={handleSave}>Save</Button>
+          <Button variant="contained" color="success" onClick={handleSubmit}>Submit</Button>
+        </>
+      ) : (
+        <>
+          <Button onClick={handleEditClick} variant="contained" color="primary">
+            Edit
+          </Button>
+        </>
+      )}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               {cols.map((col, index) => {
-                if (col.startsWith("###")) {
-                  return (
-                    <TableCell key={col}>
-                      <input
-                        type="text"
-                        // value={col}
-                        placeholder="Enter Column Name"
-                        ref={(el) => (inputRefs.current[index] = el)}
-                        onChange={(e) => handleColEdit(index, e.target.value)}
-                      />{" "}
-                      <Button
-                        onClick={() => deleteCol(col)}
-                        variant="contained"
-                        color="secondary"
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  );
-                } else {
-                  return (
-                    <TableCell key={col}>
-                      <input
-                        type="text"
-                        value={col}
-                        ref={(el) => (inputRefs.current[index] = el)}
-                        onChange={(e) => handleColEdit(index, e.target.value)}
-                      />{" "}
-                      <Button
-                        onClick={() => deleteCol(col)}
-                        variant="contained"
-                        color="secondary"
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  );
-                }
+                return renderTableHeader(col, index, (e) =>
+                  handleColEdit(index, e.target.value)
+                );
               })}
             </TableRow>
           </TableHead>
@@ -221,22 +267,24 @@ function BasicTable(props) {
               <TableRow key={row}>
                 {cols.map((col) => (
                   <TableCell key={col}>
-                    <input
-                      type="text"
-                      value={data[row][col] || ""}
-                      onChange={(e) => handleEdit(row, col, e.target.value)}
-                    />
+                    {renderTableCell(row, col, (e) =>
+                      handleEdit(row, col, e.target.value)
+                    )}
                   </TableCell>
                 ))}
-                <TableCell>
-                  <Button
-                    onClick={() => deleteRow(row)}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
+                {isEditMode ? (
+                  <TableCell>
+                    <DeleteRoundedIcon
+                      onClick={() => deleteRow(row)}
+                      fontSize="large"
+                      color="error"
+                    >
+                      Delete
+                    </DeleteRoundedIcon>
+                  </TableCell>
+                ) : (
+                  ""
+                )}
               </TableRow>
             ))}
           </TableBody>

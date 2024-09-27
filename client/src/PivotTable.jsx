@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 
-const PivotTable = () => {
+const PivotTable = (props) => {
   const [file, setFile] = useState([]);
   const [errMsg, setErrMsg] = useState("");
 
@@ -37,7 +37,7 @@ const PivotTable = () => {
 
   return (
     <div>
-      {file.length > 0 ? <BasicTable rows={rows} /> : <h1>{errMsg} ...</h1>}
+      {file.length > 0 ? <BasicTable rows={rows} isEditMode={props.isEditMode} /> : <h1>{errMsg} ...</h1>}
     </div>
   );
 };

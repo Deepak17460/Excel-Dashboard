@@ -52,7 +52,7 @@ const Home = () => {
   };
 
   const handleClick = (id) => {
-    navigate("/table/" + id);
+    navigate("/view/" + id);
   };
 
   const deleteRow = async (id) => {
