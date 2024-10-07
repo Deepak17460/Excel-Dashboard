@@ -28,6 +28,11 @@ const Navbar = () => {
       <Button variant="contained" color="secondary" onClick={handleLogout}>
         Logout
       </Button>
+      <Link to="/scratch">
+        <Button variant="contained" color="secondary">
+          Scratch
+        </Button>
+      </Link>
     </div>
   );
 };

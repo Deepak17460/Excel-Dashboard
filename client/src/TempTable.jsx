@@ -14,25 +14,24 @@ import { useEffect } from "react";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
-// let colCounter;
 
 const getUID = () => {
   return "###" + Date.now().toString();
 };
 
-function BasicTable(props) {
+function TempTable(props) {
   const { id } = useParams();
 
-  const initialRows = props.rows.map((row) => row.id);
-  const initialCols = Object.keys(props.rows[0]).filter((key) => key !== "id");
-  const initialData = props.rows.reduce((acc, row) => {
-    acc[row.id] = { ...row };
-    return acc;
-  }, {});
+//   const initialRows = props.rows.map((row) => row.id);
+//   const initialCols = Object.keys(props.rows[0]).filter((key) => key !== "id");
+//   const initialData = props.rows.reduce((acc, row) => {
+    // acc[row.id] = { ...row };
+    // return acc;
+//   }, {});
 
-  const [rows, setRows] = useState(initialRows);
-  const [cols, setCols] = useState(initialCols);
-  const [data, setData] = useState(initialData);
+  const [rows, setRows] = useState([]);
+  const [cols, setCols] = useState([]);
+  const [data, setData] = useState({});
 
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
   let shouldSubmit = true;
@@ -302,4 +301,4 @@ function BasicTable(props) {
   );
 }
 
-export default BasicTable;
+export default TempTable;
