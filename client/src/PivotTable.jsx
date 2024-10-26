@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import BasicTable from "./Table";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import Test from "./Test";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 
@@ -17,6 +18,7 @@ const PivotTable = (props) => {
       try {
         const data = (await axios.get(URL, { withCredentials: true })).data;
         setFile(data);
+        console.log(data);
       } catch (err) {
         setErrMsg(err.response.data.message);
       }
@@ -37,7 +39,8 @@ const PivotTable = (props) => {
 
   return (
     <div>
-      {file.length > 0 ? <BasicTable rows={rows} isEditMode={props.isEditMode} /> : <h1>{errMsg} ...</h1>}
+      {/* {file.length > 0 ? <BasicTable rows={rows} isEditMode={props.isEditMode} /> : <h1>{errMsg} ...</h1>} */}
+      {file.length > 0 ? <Test rows={rows} isEditMode={props.isEditMode} /> : <h1>{errMsg} ...</h1>}
     </div>
   );
 };
