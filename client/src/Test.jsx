@@ -40,11 +40,37 @@ const Test = (props) => {
     setData(newData);
   };
 
-  const addCol = () => {};
+  const addCol = () => {
+    const newCol = getUID();
+    const newCols = [...cols, newCol];
+    const newData = data.reduce((acc, record) => {
+      const newRec = { ...record };
+      newRec[newCol] = "";
+      acc = [...acc, newRec];
+      return acc;
+    }, []);
 
-  const deleteRow = (e, id) => {};
+    setCols(newCols);
+    setData(newData);
+  };
 
-  const deleteCol = (e, col) => {};
+  const deleteRow = (e, id) => {
+    const newData = data.filter((item, i) => i !== id);
+    setData(newData);
+  };
+
+  const deleteCol = (e, col) => {
+    const newCols = cols.filter((c) => c !== col);
+
+    const newData = data.reduce((acc, record) => {
+      const { [col]: _, ...newRec } = record;
+      acc = [...acc, newRec];
+      return acc;
+    }, []);
+
+    setCols(newCols);
+    setData(newData);
+  };
 
   const editRowCell = (row, col, value) => {
     const newData = [...data];
@@ -53,11 +79,13 @@ const Test = (props) => {
   };
 
   const editColCell = (e, i) => {
+    // ISSUES
+    // #1> Integers
+    // #2> Empty blur check
+    // #3> Dupes
+    // ISSUES
     let newCol = e.target.value;
     const oldCol = cols[i];
-    // if (newCol.length == 1 && newCol >= "0" && newCol <= "9")
-    //   newCol = "_" + newCol;
-    // console.log(oldCol, newCol);
     const newCols = [...cols];
     newCols[i] = newCol;
     const newData = data.reduce((acc, record) => {
@@ -105,7 +133,7 @@ const Test = (props) => {
         <>
           <input value={col} onChange={fn} />
           <DeleteRoundedIcon
-            onClick={() => deleteCol(col)}
+            onClick={(e) => deleteCol(e, col)}
             fontSize="large"
             color="error"
           >
@@ -186,7 +214,7 @@ const Test = (props) => {
                     {isEditMode && (
                       <TableCell>
                         <DeleteRoundedIcon
-                          onClick={() => deleteRow(row)}
+                          onClick={(e) => deleteRow(e, i)}
                           fontSize="large"
                           color="error"
                         >
