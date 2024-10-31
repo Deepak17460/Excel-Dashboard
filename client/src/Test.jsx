@@ -14,8 +14,9 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect } from "react";
 
+const DELIMITER = "*/#/^~@!~|+";
 const getUID = () => {
-  return "###" + Date.now().toString();
+  return DELIMITER + uuidv4().toString();
 };
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
@@ -80,14 +81,25 @@ const Test = (props) => {
 
   const editColCell = (e, i) => {
     // ISSUES
-    // #1> Integers
-    // #2> Empty blur check
-    // #3> Dupes
+    // #1> Integers 🔢
+    // #2> Empty blur check ✅
+    // #3> Dupes (while typing or blur) 🤔
     // ISSUES
     let newCol = e.target.value;
+    if (newCol === "") {
+      newCol = getUID();
+      shouldSubmit = false;
+    } else if (cols.includes(newCol)) {
+      // optimize time 🧠
+      console.log("Column name already exists. Please choose a unique name.");
+      shouldSubmit = false;
+      return;
+    }
+
     const oldCol = cols[i];
     const newCols = [...cols];
     newCols[i] = newCol;
+
     const newData = data.reduce((acc, record) => {
       const newRec = {};
       Object.entries(record).forEach(([key, value]) => {
@@ -103,6 +115,7 @@ const Test = (props) => {
 
     setCols(newCols);
     setData(newData);
+    shouldSubmit = true;
   };
 
   const handleSubmit = async () => {
@@ -127,20 +140,52 @@ const Test = (props) => {
     setIsEditMode(true);
   };
 
+  const handleBlur = (e) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      alert("Input field cannot be empty");
+      shouldSubmit = false;
+    } else {
+      shouldSubmit = true;
+    }
+  };
+
   const renderTableHeader = (col, id, fn) => {
     if (isEditMode) {
-      return (
-        <>
-          <input value={col} onChange={fn} />
-          <DeleteRoundedIcon
-            onClick={(e) => deleteCol(e, col)}
-            fontSize="large"
-            color="error"
-          >
-            Delete
-          </DeleteRoundedIcon>
-        </>
-      );
+      if (col.startsWith(DELIMITER)) {
+        shouldSubmit = false;
+        return (
+          <>
+            <input
+              value={""}
+              placeholder="Enter column name"
+              onChange={fn}
+              onBlur={handleBlur}
+            />
+            <DeleteRoundedIcon
+              onClick={(e) => deleteCol(e, col)}
+              fontSize="large"
+              color="error"
+            >
+              Delete
+            </DeleteRoundedIcon>
+          </>
+        );
+      } else {
+        shouldSubmit = true;
+        return (
+          <>
+            <input value={col} onChange={fn} onBlur={handleBlur} />
+            <DeleteRoundedIcon
+              onClick={(e) => deleteCol(e, col)}
+              fontSize="large"
+              color="error"
+            >
+              Delete
+            </DeleteRoundedIcon>
+          </>
+        );
+      }
     } else {
       return <h2>{col}</h2>;
     }
