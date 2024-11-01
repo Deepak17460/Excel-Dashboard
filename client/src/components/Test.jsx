@@ -23,19 +23,36 @@ const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 
 const Test = (props) => {
   const { id } = useParams();
-  const initCols = Object.keys(props.rows[0]).filter((k) => k !== "id");
-  const initData = props.rows.reduce((acc, item) => {
-    const { id, ...newItem } = item;
-    return [...acc, newItem];
-  }, []);
 
-  const [cols, setCols] = useState(initCols);
-  const [data, setData] = useState(initData);
+  const [cols, setCols] = useState([]);
+  const [data, setData] = useState([]);
 
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
   let shouldSubmit = true;
+  console.log(props.isEditMode);
+  useEffect(() => {
+    if (cols.length == 0) {
+      addRow();
+    }
+  }, []);
 
   const addRow = () => {
+    //REFACTOR NEEDED 👇
+    if (!cols.length) {
+      let newCol = getUID();
+      const updatedCols = [...cols, newCol];
+      const newRec = updatedCols.reduce(
+        (acc, item) => ({ ...acc, [item]: "" }),
+        {}
+      );
+      const newData = [...data, newRec];
+
+      setData(newData);
+      setCols(updatedCols);
+      return;
+    }
+    //REFACTOR NEEDED 👆
+    // console.log("Inside add row", cols);
     const newRec = cols.reduce((acc, item) => ({ ...acc, [item]: "" }), {});
     const newData = [...data, newRec];
     setData(newData);
@@ -125,8 +142,8 @@ const Test = (props) => {
 
       const payload = [...data];
 
-      const res = await axios.put(
-        URL + "/" + id,
+      const res = await axios.post(
+        URL + "/",
         { data: payload },
         { withCredentials: true }
       );
@@ -231,7 +248,7 @@ const Test = (props) => {
         </>
       )}
 
-      {data && (
+      {data.length && (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
