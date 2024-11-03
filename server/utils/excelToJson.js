@@ -24,4 +24,15 @@ function jsonToExcel(filePath, data) {
   xlsx.writeFile(workbook, filePath);
 }
 
-module.exports = { excelToJson, jsonToExcel };
+function jsonToExcelCreate(filePath, data) {
+  const workbook = xlsx.utils.book_new();
+  const sheetName = workbook.SheetNames[0] || 'Sheet1';
+  const newWorksheet = xlsx.utils.json_to_sheet(data);
+  workbook.Sheets[sheetName] = newWorksheet;
+  if (!workbook.SheetNames.includes(sheetName)) {
+    workbook.SheetNames.push(sheetName);
+  }
+  xlsx.writeFile(workbook, filePath);
+}
+
+module.exports = { excelToJson, jsonToExcel, jsonToExcelCreate };

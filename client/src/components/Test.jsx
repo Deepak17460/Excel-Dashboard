@@ -140,10 +140,14 @@ const Test = (props) => {
     try {
       if (Object.keys(data).length === 0) return;
 
-      const payload = [...data];
+      const payload = {
+        filename: "Test",
+        filetype: "xlsx",
+        filedata: [...data],
+      };
 
       const res = await axios.post(
-        URL + "/",
+        URL + "create-file",
         { data: payload },
         { withCredentials: true }
       );

@@ -1,9 +1,14 @@
 const path = require("path");
-const { excelToJson, jsonToExcel } = require("../utils/excelToJson");
+const {
+  excelToJson,
+  jsonToExcel,
+  jsonToExcelCreate,
+} = require("../utils/excelToJson");
 // const getFiles = require("../services/getAllFiles.service");
 const { UserToFiles } = require("../models");
 const fs = require("fs");
 const createError = require("../utils/errors");
+const formatDate = require("../utils/dateFormat");
 
 const getFileDetails = async (req, res, next) => {
   try {
@@ -121,6 +126,25 @@ const convertToJson = async (req, res, next) => {
   }
 };
 
+const createExcelFile = async (req, res, next) => {
+  try {
+    const obj = req.body.data;
+    const fileName =
+      formatDate(new Date()) + "_" + obj.filename + "." + obj.filetype;
+    const file = "../public/temp/" + fileName;
+    // console.log(obj.filename, obj.filedata);
+    const _path = path.join(__dirname, file);
+    jsonToExcelCreate(_path, obj.filedata);
+    await UserToFiles.create({
+      userId: req.user.id,
+      filename: fileName,
+    });
+    res.send("Created success!");
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getFileDetails,
   getAllFileNames,
@@ -128,4 +152,5 @@ module.exports = {
   editFileDetails,
   deleteFile,
   convertToJson,
+  createExcelFile,
 };
