@@ -216,8 +216,8 @@ const SortableTable = (props) => {
           </Button>
         </>
       )}
-      <div className="">
-        <div className="">
+      <div className="mx-auto max-w-7xl py-10">
+        <div className="mt-10">
           <div className="">
             <DndContext
               sensors={sensors}
@@ -251,7 +251,10 @@ const SortableTable = (props) => {
                           id={item.colId}
                           val={item.data}
                           itemId={item.id}
+                          isEditMode={isEditMode}
                           type={"col"}
+                          indexR={rowI}
+                          indexC={colI}
                           onChangeHandler={editRowCell}
                         />
                       ) : (
@@ -260,7 +263,10 @@ const SortableTable = (props) => {
                           id={item.rowId}
                           val={item.data}
                           itemId={item.id}
+                          isEditMode={isEditMode}
                           type={"row"}
+                          indexR={rowI}
+                          indexC={colI}
                           onChangeHandler={editRowCell}
                         />
                       )
