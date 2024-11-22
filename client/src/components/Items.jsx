@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
 import React from "react";
 
-const Items = ({ id, val, type }) => {
+const Items = ({ id, itemId, val, type, onChangeHandler }) => {
   const {
     attributes,
     setNodeRef,
@@ -17,7 +17,7 @@ const Items = ({ id, val, type }) => {
   });
   return (
     <div
-      {...listeners}
+      //   {...listeners}
       ref={setNodeRef}
       {...attributes}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
@@ -28,13 +28,16 @@ const Items = ({ id, val, type }) => {
         `}
     >
       <div className="flex flex-center justify-between">
-        {val}
-        {/* <button
+        <input
+          value={val}
+          onChange={(e) => onChangeHandler(itemId, e.target.value)}
+        />
+        <button
           className="border p-2 rounded-xl shadow-lg hover:shadow-xl"
           {...listeners}
         >
           Drag
-        </button> */}
+        </button>
       </div>
     </div>
   );

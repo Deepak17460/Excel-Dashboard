@@ -10,6 +10,8 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
+import { Button } from "@mui/material";
+
 import {
   arrayMove,
   horizontalListSortingStrategy,
@@ -67,8 +69,9 @@ const SortableTable = (props) => {
   const [columnHover, setColumnHover] = useState(false);
   const [columnIds, setColumnIds] = useState(initCols);
   const [rowIds, setRowIds] = useState(initRows);
+  const [isEditMode, setIsEditMode] = useState(props.isEditMode);
 
-  console.log(containers);
+  //   console.log(containers);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -156,8 +159,63 @@ const SortableTable = (props) => {
     setColumnHover(isHovering);
   };
 
+  const onChangeHandler = (e) => {};
+
+  const editRowCell = (id, val) => {
+    const newData = JSON.parse(JSON.stringify(containers));
+    let rowI = -1;
+    let colI = -1;
+    console.log(newData);
+    for (let i in newData) {
+      colI = newData[i].findIndex((item) => item.id === id);
+      if (colI !== -1) {
+        rowI = i;
+        break;
+      }
+    }
+    console.log(val);
+    console.log(id, rowI, colI);
+    newData[rowI][colI] = { ...newData[rowI][colI], data: val };
+    console.log("init val - ", newData[rowI][colI]);
+    console.log("new val - ", val);
+    setContainers(newData);
+  };
+  const addRow = () => {};
+  
+  const addCol = () => {};
+  
+  const handleSubmit = () => {
+    setIsEditMode(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditMode(true);
+  };
+
   return (
     <>
+      {isEditMode ? (
+        <>
+          <Button variant="contained" color="success" onClick={addRow}>
+            Add Row
+          </Button>
+          <Button variant="contained" color="success" onClick={addCol}>
+            Add Column
+          </Button>
+          {/* <Button variant="contained" color="success" onClick={handleSave}>
+            Save
+          </Button> */}
+          <Button variant="contained" color="success" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button onClick={handleEditClick} variant="contained" color="primary">
+            Edit
+          </Button>
+        </>
+      )}
       <div className="">
         <div className="">
           <div className="">
@@ -179,57 +237,37 @@ const SortableTable = (props) => {
                     : verticalListSortingStrategy
                 }
               >
-                {containers.map((row, i) => (
+                {containers.map((row, rowI) => (
                   <div
-                    key={i}
+                    key={rowI}
                     className="flex"
-                    onMouseEnter={() => i === 0 && handleHover(true)}
-                    onMouseLeave={() => i === 0 && handleHover(false)}
+                    onMouseEnter={() => rowI === 0 && handleHover(true)}
+                    onMouseLeave={() => rowI === 0 && handleHover(false)}
                   >
-                    {row.map((item, i) =>
+                    {row.map((item, colI) =>
                       columnHover ? (
                         <Items
-                          key={i + item.colId}
+                          key={item.id}
                           id={item.colId}
                           val={item.data}
+                          itemId={item.id}
                           type={"col"}
+                          onChangeHandler={editRowCell}
                         />
                       ) : (
                         <Items
-                          key={i + item.rowId}
+                          key={item.id}
                           id={item.rowId}
                           val={item.data}
+                          itemId={item.id}
                           type={"row"}
+                          onChangeHandler={editRowCell}
                         />
                       )
                     )}
                   </div>
                 ))}
               </SortableContext>
-              {/* <DragOverlay>
-                  {activeId
-                    ? containers.map((row) => (
-                        <div className={columnHover ? "" : "flex"}>
-                          {row.map((item) => {
-                            if (
-                              item.rowId === activeId ||
-                              item.colId === activeId
-                            ) {
-                              return (
-                                <Items
-                                  key={item.rowId || item.colId}
-                                  id={item.rowId || item.colId}
-                                  val={item.data}
-                                  type={columnHover ? "col" : "row"}
-                                />
-                              );
-                            }
-                            return null;
-                          })}
-                        </div>
-                      ))
-                    : null}
-                </DragOverlay> */}
             </DndContext>
           </div>
         </div>
