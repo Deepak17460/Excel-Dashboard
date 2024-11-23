@@ -289,27 +289,27 @@ const SortableTable = (props) => {
           </Button>
         </>
       )}
-      <div className="mx-auto max-w-7xl py-10">
-        <div className="mt-10">
-          <div className="">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCorners}
-              onDragStart={handleDragStart}
-              onDragMove={handleDragMove}
-              onDragEnd={handleDragEnd}
-              modifiers={[
-                columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
-              ]}
+      <div className="flex items-center justify-center mt-20">
+        <div className="container w-full h-96 overflow-auto flex flex-col border border-gray-300 bg-gray-100">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragMove={handleDragMove}
+            onDragEnd={handleDragEnd}
+            modifiers={[
+              columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
+            ]}
+          >
+            <SortableContext
+              items={columnHover ? columnIds : rowIds}
+              strategy={
+                columnHover
+                  ? horizontalListSortingStrategy
+                  : verticalListSortingStrategy
+              }
             >
-              <SortableContext
-                items={columnHover ? columnIds : rowIds}
-                strategy={
-                  columnHover
-                    ? horizontalListSortingStrategy
-                    : verticalListSortingStrategy
-                }
-              >
+              <div className="w-max">
                 {containers.map((row, rowI) => (
                   <div
                     key={rowI}
@@ -333,9 +333,9 @@ const SortableTable = (props) => {
                     ))}
                   </div>
                 ))}
-              </SortableContext>
-            </DndContext>
-          </div>
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       </div>
     </>

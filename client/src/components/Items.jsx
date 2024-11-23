@@ -35,8 +35,8 @@ const Items = ({
       ref={setNodeRef}
       {...attributes}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
-      className={`m-1 px-2 py-2 shadow-md rounded-xl w-full border border-transparent border-2 flex justify-between
-        max-w-[500px] max-h-[100px] overflow-auto
+      className={`m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex justify-between 
+        w-[290px] max-h-[100px] overflow-auto
         ${isDragging ? "bg-gray-100" : "bg-white"}
           `}
     >
@@ -45,21 +45,21 @@ const Items = ({
         {indexR !== 0 && indexC === 0 && <DragHandleIcon {...listeners} />}
         {isEditMode ? (
           <input
-            className="px-4"
+            className="px-4 py-1 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={val}
             onChange={(e) => onChangeHandler(itemId, e.target.value)}
           />
         ) : (
           <h1 className="px-4">{val}</h1>
         )}
-      </div>
-      <div className="">
-        {isEditMode && (
-          <DeleteRoundedIcon
-            onClick={(e) => deleteHandler(indexR, indexC, type)}
-            color="error"
-          />
-        )}
+        <div className="px-1">
+          {isEditMode && (indexC === 0 || indexR === 0) && (
+            <DeleteRoundedIcon
+              onClick={(e) => deleteHandler(indexR, indexC, type)}
+              color="error"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
