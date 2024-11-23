@@ -91,7 +91,7 @@ const SortableTable = (props) => {
   const [rowIds, setRowIds] = useState(initRows);
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
 
-  //   console.log(props.rows, containers);
+  console.log(containers);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -198,7 +198,7 @@ const SortableTable = (props) => {
     console.log("new val - ", val);
     setContainers(newData);
   };
-  
+
   const addRow = () => {
     const newData = JSON.parse(JSON.stringify(containers));
     const cols = getCols(containers);
@@ -217,7 +217,33 @@ const SortableTable = (props) => {
     setContainers(newData);
   };
 
-  const addCol = () => {};
+  const addCol = () => {
+    let newData = JSON.parse(JSON.stringify(containers));
+    const colLen = containers[0].length;
+
+    newData.forEach((row, i) => {
+      const obj = {
+        id: getUID(),
+        rowId: "row-" + i,
+        colId: "col-" + colLen,
+        data: "",
+      };
+      row.push(obj);
+    });
+    // console.log(newData);
+    setContainers(newData);
+  };
+
+  const deleteRowOrCol = (row, col, type) => {
+    let newData = JSON.parse(JSON.stringify(containers));
+    if (type === "row") {
+      newData = newData.filter((_, i) => i !== row);
+      setContainers(newData);
+    } else {
+      newData = newData.map((row) => row.filter((item, i) => i !== col));
+      setContainers(newData);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -302,6 +328,7 @@ const SortableTable = (props) => {
                         indexR={rowI}
                         indexC={colI}
                         onChangeHandler={editRowCell}
+                        deleteHandler={deleteRowOrCol}
                       />
                     ))}
                   </div>
