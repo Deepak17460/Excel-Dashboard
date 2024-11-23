@@ -20,7 +20,6 @@ const Items = ({
   onChangeHandler,
   deleteHandler,
   fixedContainers,
-  setFixedContainers,
   handelFixedRows,
 }) => {
   const {
@@ -76,7 +75,7 @@ const Items = ({
         {fixed ? (
           <button onClick={() => handelFixedRows(null, fixedContainers[indexR])}>unfix</button>
         ) : (
-          <button onClick={() => handelFixedRows(indexR, null)}>fix</button>
+          <button onClick={() => handelFixedRows(rowId, null)}>fix</button>
         )}
       </div>
     </div>
