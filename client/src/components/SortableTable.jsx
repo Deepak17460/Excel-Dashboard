@@ -198,7 +198,24 @@ const SortableTable = (props) => {
     console.log("new val - ", val);
     setContainers(newData);
   };
-  const addRow = () => {};
+  
+  const addRow = () => {
+    const newData = JSON.parse(JSON.stringify(containers));
+    const cols = getCols(containers);
+    const len = containers.length;
+    const newRow = cols.reduce((acc, c, i) => {
+      const obj = {
+        id: getUID(),
+        rowId: "row-" + len,
+        colId: "col-" + i,
+        data: "",
+      };
+
+      return [...acc, obj];
+    }, []);
+    newData.push(newRow);
+    setContainers(newData);
+  };
 
   const addCol = () => {};
 
@@ -210,7 +227,7 @@ const SortableTable = (props) => {
         { data: payload },
         { withCredentials: true }
       );
-      console.log('Edited!')
+      console.log("Edited!");
     } catch (err) {
       console.log(err);
     } finally {
