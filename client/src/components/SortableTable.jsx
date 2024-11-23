@@ -11,6 +11,8 @@ import {
 } from "@dnd-kit/core";
 
 import { Button } from "@mui/material";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 import {
   arrayMove,
@@ -28,12 +30,30 @@ import {
 import Items from "./Items";
 import { v4 as uuidv4 } from "uuid";
 
+const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
+
 const getUID = () => {
   return uuidv4().toString();
 };
 
+const getCols = (data) => {
+  return data[0].map((item) => item.data);
+};
+
+const convertToPayloadType = (data) => {
+  const cols = getCols(data);
+  return data.slice(1).reduce((acc, item) => {
+    let obj = {};
+    console.log(item);
+    cols.forEach((col, i) => {
+      obj = { ...obj, [col]: item[i].data };
+    });
+    return [...acc, obj];
+  }, []);
+};
+
 const SortableTable = (props) => {
-  //   console.log(props.rows);
+  const { id } = useParams();
   let initData = [];
   const cols = Object.keys(props.rows[0])
     .filter((k) => k !== "id")
@@ -71,7 +91,7 @@ const SortableTable = (props) => {
   const [rowIds, setRowIds] = useState(initRows);
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
 
-  //   console.log(containers);
+  //   console.log(props.rows, containers);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -159,8 +179,6 @@ const SortableTable = (props) => {
     setColumnHover(isHovering);
   };
 
-  const onChangeHandler = (e) => {};
-
   const editRowCell = (id, val) => {
     const newData = JSON.parse(JSON.stringify(containers));
     let rowI = -1;
@@ -181,11 +199,23 @@ const SortableTable = (props) => {
     setContainers(newData);
   };
   const addRow = () => {};
-  
+
   const addCol = () => {};
-  
-  const handleSubmit = () => {
-    setIsEditMode(false);
+
+  const handleSubmit = async () => {
+    try {
+      const payload = convertToPayloadType(containers);
+      await axios.put(
+        URL + "/" + id,
+        { data: payload },
+        { withCredentials: true }
+      );
+      console.log('Edited!')
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsEditMode(false);
+    }
   };
 
   const handleEditClick = () => {
@@ -244,33 +274,19 @@ const SortableTable = (props) => {
                     onMouseEnter={() => rowI === 0 && handleHover(true)}
                     onMouseLeave={() => rowI === 0 && handleHover(false)}
                   >
-                    {row.map((item, colI) =>
-                      columnHover ? (
-                        <Items
-                          key={item.id}
-                          id={item.colId}
-                          val={item.data}
-                          itemId={item.id}
-                          isEditMode={isEditMode}
-                          type={"col"}
-                          indexR={rowI}
-                          indexC={colI}
-                          onChangeHandler={editRowCell}
-                        />
-                      ) : (
-                        <Items
-                          key={item.id}
-                          id={item.rowId}
-                          val={item.data}
-                          itemId={item.id}
-                          isEditMode={isEditMode}
-                          type={"row"}
-                          indexR={rowI}
-                          indexC={colI}
-                          onChangeHandler={editRowCell}
-                        />
-                      )
-                    )}
+                    {row.map((item, colI) => (
+                      <Items
+                        key={item.id}
+                        id={columnHover ? item.colId : item.rowId}
+                        val={item.data}
+                        itemId={item.id}
+                        isEditMode={isEditMode}
+                        type={columnHover ? "col" : "row"}
+                        indexR={rowI}
+                        indexC={colI}
+                        onChangeHandler={editRowCell}
+                      />
+                    ))}
                   </div>
                 ))}
               </SortableContext>
