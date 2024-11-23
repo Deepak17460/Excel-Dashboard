@@ -50,7 +50,7 @@ const Items = ({
             onChange={(e) => onChangeHandler(itemId, e.target.value)}
           />
         ) : (
-          <h1 className="px-4">{val}</h1>
+          <h1 className={`px-4 ${indexR === 0 ? "text-2xl font-bold" : "text-xl"}`}>{val}</h1>
         )}
         <div className="px-1">
           {isEditMode && (indexC === 0 || indexR === 0) && (

@@ -289,8 +289,8 @@ const SortableTable = (props) => {
           </Button>
         </>
       )}
-      <div className="flex items-center justify-center mt-20">
-        <div className="container w-full h-96 overflow-auto flex flex-col border border-gray-300 bg-gray-100">
+      <div className="flex items-center justify-center mt-10">
+        <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCorners}
