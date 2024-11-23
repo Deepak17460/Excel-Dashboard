@@ -11,11 +11,17 @@ const Items = ({
   itemId,
   val,
   isEditMode,
+  rowId,
+  colId,
   indexR,
   indexC,
   type,
+  fixed,
   onChangeHandler,
   deleteHandler,
+  fixedContainers,
+  setFixedContainers,
+  handelFixedRows,
 }) => {
   const {
     attributes,
@@ -50,7 +56,13 @@ const Items = ({
             onChange={(e) => onChangeHandler(itemId, e.target.value)}
           />
         ) : (
-          <h1 className={`px-4 ${indexR === 0 ? "text-2xl font-bold" : "text-xl"}`}>{val}</h1>
+          <h1
+            className={`px-4 ${
+              rowId === "row-0" ? "text-2xl font-bold" : "text-xl"
+            }`}
+          >
+            {val}
+          </h1>
         )}
         <div className="px-1">
           {isEditMode && (indexC === 0 || indexR === 0) && (
@@ -60,6 +72,12 @@ const Items = ({
             />
           )}
         </div>
+        {/* {fixed && console.log(fixedContainers)} */}
+        {fixed ? (
+          <button onClick={() => handelFixedRows(null, fixedContainers[indexR])}>unfix</button>
+        ) : (
+          <button onClick={() => handelFixedRows(indexR, null)}>fix</button>
+        )}
       </div>
     </div>
   );
