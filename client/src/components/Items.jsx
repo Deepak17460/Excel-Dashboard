@@ -3,7 +3,8 @@ import { CSS } from "@dnd-kit/utilities";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
+import PushPinIcon from "@mui/icons-material/PushPin";
 import React, { useState } from "react";
 
 const Items = ({
@@ -41,7 +42,7 @@ const Items = ({
       {...attributes}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
       className={`m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex justify-between 
-        w-[290px] max-h-[100px] overflow-auto
+        max-w-[300px] max-h-[100px] overflow-auto
         ${isDragging ? "bg-gray-100" : "bg-white"}
           `}
     >
@@ -70,13 +71,14 @@ const Items = ({
               color="error"
             />
           )}
+          {fixed ? (
+            <PushPinIcon
+              onClick={() => handelFixedRows(null, fixedContainers[indexR])}
+            />
+          ) : (
+            <PushPinOutlinedIcon onClick={() => handelFixedRows(rowId, null)} />
+          )}
         </div>
-        {/* {fixed && console.log(fixedContainers)} */}
-        {fixed ? (
-          <button onClick={() => handelFixedRows(null, fixedContainers[indexR])}>unfix</button>
-        ) : (
-          <button onClick={() => handelFixedRows(rowId, null)}>fix</button>
-        )}
       </div>
     </div>
   );
