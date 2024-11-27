@@ -42,7 +42,7 @@ const Items = ({
       {...attributes}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
       className={`m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex justify-between 
-        max-w-[300px] max-h-[100px] overflow-auto
+        w-[300px] max-h-[100px] overflow-auto
         ${isDragging ? "bg-gray-100" : "bg-white"}
           `}
     >

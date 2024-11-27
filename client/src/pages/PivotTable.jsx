@@ -10,6 +10,7 @@ const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 const PivotTable = (props) => {
   const [file, setFile] = useState([]);
   const [errMsg, setErrMsg] = useState("");
+  const [toggleMode, setToggleMode] = useState(false);
 
   let rows = [];
   const { id } = useParams();
@@ -40,8 +41,23 @@ const PivotTable = (props) => {
 
   return (
     <div>
-      {/* {file.length > 0 ? <SortableTable rows={rows} /> : <h1>{errMsg} ...</h1>} */}
-      {file.length > 0 ? <GroupTable rows={rows} /> : <h1>{errMsg} ...</h1>}
+      {toggleMode ? (
+        <button onClick={() => setToggleMode(!toggleMode)}>Sort Mode</button>
+      ) : (
+        <button onClick={() => setToggleMode(!toggleMode)}>View Mode</button>
+      )}
+
+      {toggleMode ? (
+        file.length > 0 ? (
+          <GroupTable rows={rows} />
+        ) : (
+          <h1>{errMsg} ...</h1>
+        )
+      ) : file.length > 0 ? (
+        <SortableTable rows={rows} />
+      ) : (
+        <h1>{errMsg} ...</h1>
+      )}
     </div>
   );
 };
