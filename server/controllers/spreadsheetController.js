@@ -63,17 +63,17 @@ const editFileDetails = async (req, res, next) => {
     const fileRecord = await UserToFiles.findByPk(recordId);
     if (!fileRecord) return next(createError(404, "File not found"));
     const filename = fileRecord.filename;
-    
-    console.log("Yes edit workin")
+
+    console.log("Yes edit workin");
     const file = "../public/temp/" + filename;
 
     const _path = path.join(__dirname, file);
     const jsonData = req.body.data;
 
     jsonToExcel(_path, jsonData);
-    _time = new Date()
+    _time = new Date();
     fileRecord.updatedAt = _time;
-    fileRecord.changed('updatedAt', true);
+    fileRecord.changed("updatedAt", true);
     await fileRecord.save();
 
     res.send("Edit success!");
@@ -150,6 +150,50 @@ const createExcelFile = async (req, res, next) => {
   }
 };
 
+const updateFileName = async (req, res, next) => {
+  try {
+    const { id } = req.params; // Record ID to update
+    const { filename, filetype } = req.body; // New file name from the request
+    const newFileName =
+      formatDate(new Date()) + "_" + filename + "." + filetype;
+
+    if (!newFileName) {
+      return res.status(400).json({ error: "New file name is required." });
+    }
+
+    // Find the record in the database
+    const fileRecord = await UserToFiles.findByPk(id);
+
+    if (!fileRecord) {
+      return res.status(404).json({ error: "File record not found." });
+    }
+
+    const oldFileName = fileRecord.filename;
+    const oldFilePath = path.join(__dirname, "../public/temp/", oldFileName);
+    const newFilePath = path.join(__dirname, "../public/temp/", newFileName);
+
+    // Rename the file on the server
+    if (fs.existsSync(oldFilePath)) {
+      fs.renameSync(oldFilePath, newFilePath);
+    } else {
+      return res
+        .status(404)
+        .json({ error: `File "${oldFileName}" not found on the server.` });
+    }
+
+    // Update the record in the database
+    fileRecord.filename = newFileName;
+    _time = new Date();
+    fileRecord.updatedAt = _time;
+    fileRecord.changed("updatedAt", true);
+    await fileRecord.save();
+
+    res.json({ message: "File name updated successfully." });
+  } catch (error) {
+    next(error); // Pass error to the error handler
+  }
+};
+
 module.exports = {
   getFileDetails,
   getAllFileNames,
@@ -158,4 +202,5 @@ module.exports = {
   deleteFile,
   convertToJson,
   createExcelFile,
+  updateFileName,
 };
