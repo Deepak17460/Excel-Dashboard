@@ -268,14 +268,16 @@ const SortableTable = (props) => {
 
   const handelFixedRows = (rowAdd, rowRem) => {
     if (rowAdd !== null) setFixedRowContainers([...fixedRowContainers, rowAdd]);
-    else setFixedRowContainers(fixedRowContainers.filter((item) => item !== rowRem));
+    else
+      setFixedRowContainers(
+        fixedRowContainers.filter((item) => item !== rowRem)
+      );
   };
 
   const handleFixedCols = (colAdd, colRem) => {
-    if(colAdd !== null) {
-      
+    if (colAdd !== null) {
     }
-  }
+  };
 
   console.log(fixedRowContainers);
   return (
@@ -358,64 +360,66 @@ const SortableTable = (props) => {
             </SortableContext>
           </DndContext>
         </div>
-        <div className="flex">
-          {/*Fixed Cols */}
-          {/* <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCorners}
-              onDragStart={handleDragStart}
-              onDragMove={handleDragMove}
-              onDragEnd={handleDragEnd}
-              modifiers={[
-                columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
-              ]}
+        {/*Rest Table */}
+        <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragMove={handleDragMove}
+            onDragEnd={handleDragEnd}
+            modifiers={[
+              columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
+            ]}
+          >
+            <SortableContext
+              items={columnHover ? columnIds : rowIds}
+              strategy={
+                columnHover
+                  ? horizontalListSortingStrategy
+                  : verticalListSortingStrategy
+              }
             >
-              <SortableContext
-                items={columnHover ? columnIds : rowIds}
-                strategy={
-                  columnHover
-                    ? horizontalListSortingStrategy
-                    : verticalListSortingStrategy
-                }
-              >
-                <div className="w-max">
-                  {containers
-                    .filter((row, i) => !fixedRowContainers.includes(row[0].rowId))
-                    .map((row, rowI) => (
-                      <div
-                        key={rowI}
-                        className="flex"
-                        onMouseEnter={() => rowI === 0 && handleHover(true)}
-                        onMouseLeave={() => rowI === 0 && handleHover(false)}
-                      >
-                        {row.map((item, colI) => (
-                          <Items
-                            key={item.id}
-                            id={columnHover ? item.colId : item.rowId}
-                            val={item.data}
-                            itemId={item.id}
-                            isEditMode={isEditMode}
-                            type={columnHover ? "col" : "row"}
-                            indexR={rowI}
-                            indexC={colI}
-                            onChangeHandler={editRowCell}
-                            deleteHandler={deleteRowOrCol}
-                            fixedRowContainers={fixedRowContainers}
-                            rowId={item.rowId}
-                            colId={item.colId}
-                            fixed={false}
-                            handelFixedRows={handelFixedRows}
-                          />
-                        ))}
-                      </div>
-                    ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          </div> */}
-
-          {/*Rest Table */}
+              <div className="w-max">
+                {containers
+                  .filter(
+                    (row, i) => !fixedRowContainers.includes(row[0].rowId)
+                  )
+                  .map((row, rowI) => (
+                    <div
+                      key={rowI}
+                      className="flex"
+                      onMouseEnter={() => rowI === 0 && handleHover(true)}
+                      onMouseLeave={() => rowI === 0 && handleHover(false)}
+                    >
+                      {row.map((item, colI) => (
+                        <Items
+                          key={item.id}
+                          id={columnHover ? item.colId : item.rowId}
+                          val={item.data}
+                          itemId={item.id}
+                          isEditMode={isEditMode}
+                          type={columnHover ? "col" : "row"}
+                          indexR={rowI}
+                          indexC={colI}
+                          onChangeHandler={editRowCell}
+                          deleteHandler={deleteRowOrCol}
+                          fixedRowContainers={fixedRowContainers}
+                          fixedColContainers={fixedColContainers}
+                          rowId={item.rowId}
+                          colId={item.colId}
+                          fixed={false}
+                          handelFixedRows={handelFixedRows}
+                        />
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
+        {/*Fixed Cols */}
+        {/* <div className="flex">
           <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
             <DndContext
               sensors={sensors}
@@ -437,7 +441,9 @@ const SortableTable = (props) => {
               >
                 <div className="w-max">
                   {containers
-                    .filter((row, i) => !fixedRowContainers.includes(row[0].rowId))
+                    .filter(
+                      (row, i) => !fixedRowContainers.includes(row[0].rowId)
+                    )
                     .map((row, rowI) => (
                       <div
                         key={rowI}
@@ -458,7 +464,6 @@ const SortableTable = (props) => {
                             onChangeHandler={editRowCell}
                             deleteHandler={deleteRowOrCol}
                             fixedRowContainers={fixedRowContainers}
-                            fixedColContainers={fixedColContainers}
                             rowId={item.rowId}
                             colId={item.colId}
                             fixed={false}
@@ -471,7 +476,7 @@ const SortableTable = (props) => {
               </SortableContext>
             </DndContext>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

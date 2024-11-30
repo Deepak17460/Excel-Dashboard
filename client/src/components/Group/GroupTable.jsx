@@ -95,13 +95,11 @@ const GroupTable = (props) => {
 
           <div className="w-max">
             <div className="flex">
-            {columns.map((col, index) => (
-              <div key={index} className="flex">
+              {columns.map((col, index) => (
                 <DraggableColumn key={index} id={`col-${index}`}>
                   <th>{col}</th>
                 </DraggableColumn>
-              </div>
-            ))}
+              ))}
             </div>
             {groupedData
               ? Object.keys(groupedData).map((groupKey) => (
@@ -126,18 +124,6 @@ const GroupTable = (props) => {
                   </div>
                 ))}
           </div>
-          {/* Table */}
-          {/* <table border="1" style={{ marginTop: "20px", width: "100%" }}>
-            <thead>
-              <tr>
-                {columns.map((col, index) => (
-                  <DraggableColumn key={index} id={`col-${index}`}>
-                    <th>{col}</th>
-                  </DraggableColumn>
-                ))}
-              </tr>
-            </thead>
-          </table> */}
         </DndContext>
       </div>
     </div>
@@ -159,18 +145,14 @@ const DraggableColumn = ({ id, children }) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex justify-between 
-        w-[300px] max-h-[100px] overflow-auto
+      className="m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex 
+        justify-between max-w-[300px] max-h-[100px] overflow-auto
         bg-white"
       {...attributes}
       {...listeners}
     >
       <div className={`flex flex-row "justify-start"`}>
-        <h1
-          className={`text-2xl font-bold`}
-        >
-          {children}
-        </h1>
+        <h1 className={`text-2xl font-bold`}>{children}</h1>
       </div>
     </div>
   );
