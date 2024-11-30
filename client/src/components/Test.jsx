@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect } from "react";
+import CheckIcon from "@mui/icons-material/Check";
 
 const DELIMITER = "*/#/^~@!~|+";
 const getUID = () => {
@@ -26,10 +27,11 @@ const Test = (props) => {
 
   const [cols, setCols] = useState([]);
   const [data, setData] = useState([]);
+  const [filename, setFilename] = useState("");
 
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
   let shouldSubmit = true;
-  console.log(props.isEditMode);
+
   useEffect(() => {
     if (cols.length == 0) {
       addRow();
@@ -136,12 +138,12 @@ const Test = (props) => {
   };
 
   const handleSubmit = async () => {
-    if (!shouldSubmit) return; // add toast
+    if (!shouldSubmit || filename.length === 0) return; // add toast
     try {
       if (Object.keys(data).length === 0) return;
 
       const payload = {
-        filename: "Test",
+        filename: filename,
         filetype: "xlsx",
         filedata: [...data],
       };
@@ -224,9 +226,6 @@ const Test = (props) => {
     }
   };
 
-  console.log(data);
-  console.log(cols);
-
   return (
     <div>
       {isEditMode ? (
@@ -251,7 +250,13 @@ const Test = (props) => {
           </Button>
         </>
       )}
-
+      <input
+        className="px-4 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        value={filename}
+        placeholder="Enter filename"
+        onChange={(e) => setFilename(e.target.value)}
+      />
+      {/* <CheckIcon fontSize="large" color="success" className="cursor-pointer" /> */}
       {data.length && (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
