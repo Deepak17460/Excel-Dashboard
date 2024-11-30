@@ -37,7 +37,13 @@ const getAllFileNames = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const ans = await UserToFiles.findAll({ where: { userId } });
-    res.json(ans);
+
+    const transformedData = ans.map((file) => ({
+      ...file.dataValues,
+      filename: file.dataValues.filename.slice(21),
+    }));
+
+    res.json(transformedData);
   } catch (error) {
     next(error);
   }
