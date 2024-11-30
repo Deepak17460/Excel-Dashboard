@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'UserToFiles',
+    timestamps: true,
   });
   return UserToFiles;
 };

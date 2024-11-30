@@ -61,16 +61,21 @@ const editFileDetails = async (req, res, next) => {
   try {
     const recordId = req.params.id;
     const fileRecord = await UserToFiles.findByPk(recordId);
-
     if (!fileRecord) return next(createError(404, "File not found"));
     const filename = fileRecord.filename;
-
+    
+    console.log("Yes edit workin")
     const file = "../public/temp/" + filename;
 
     const _path = path.join(__dirname, file);
     const jsonData = req.body.data;
 
     jsonToExcel(_path, jsonData);
+    _time = new Date()
+    fileRecord.updatedAt = _time;
+    fileRecord.changed('updatedAt', true);
+    await fileRecord.save();
+
     res.send("Edit success!");
   } catch (error) {
     next(error);
