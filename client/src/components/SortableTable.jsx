@@ -90,7 +90,8 @@ const SortableTable = (props) => {
   const [columnIds, setColumnIds] = useState(initCols);
   const [rowIds, setRowIds] = useState(initRows);
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
-  const [fixedContainers, setFixedContainers] = useState([]);
+  const [fixedRowContainers, setFixedRowContainers] = useState([]);
+  const [fixedColContainers, setFixedColContainers] = useState([]);
   //   console.log(containers);
 
   const sensors = useSensors(
@@ -266,11 +267,17 @@ const SortableTable = (props) => {
   };
 
   const handelFixedRows = (rowAdd, rowRem) => {
-    if (rowAdd !== null) setFixedContainers([...fixedContainers, rowAdd]);
-    else setFixedContainers(fixedContainers.filter((item) => item !== rowRem));
+    if (rowAdd !== null) setFixedRowContainers([...fixedRowContainers, rowAdd]);
+    else setFixedRowContainers(fixedRowContainers.filter((item) => item !== rowRem));
   };
 
-  console.log(fixedContainers);
+  const handleFixedCols = (colAdd, colRem) => {
+    if(colAdd !== null) {
+      
+    }
+  }
+
+  console.log(fixedRowContainers);
   return (
     <>
       {isEditMode ? (
@@ -296,6 +303,7 @@ const SortableTable = (props) => {
         </>
       )}
       <div className="flex flex-col items-center justify-center mt-10">
+        {/*Fixed Rows */}
         <div className="container w-full overflow-auto flex flex-col border border-gray-300 bg-gray-100">
           <DndContext
             sensors={sensors}
@@ -317,7 +325,7 @@ const SortableTable = (props) => {
             >
               <div className="w-max">
                 {containers
-                  .filter((row, i) => fixedContainers.includes(row[0].rowId))
+                  .filter((row, i) => fixedRowContainers.includes(row[0].rowId))
                   .map((row, rowI) => (
                     <div
                       key={rowI}
@@ -340,7 +348,7 @@ const SortableTable = (props) => {
                           fixed={true}
                           onChangeHandler={editRowCell}
                           deleteHandler={deleteRowOrCol}
-                          fixedContainers={fixedContainers}
+                          fixedRowContainers={fixedRowContainers}
                           handelFixedRows={handelFixedRows}
                         />
                       ))}
@@ -350,59 +358,119 @@ const SortableTable = (props) => {
             </SortableContext>
           </DndContext>
         </div>
-        <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragMove={handleDragMove}
-            onDragEnd={handleDragEnd}
-            modifiers={[
-              columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
-            ]}
-          >
-            <SortableContext
-              items={columnHover ? columnIds : rowIds}
-              strategy={
-                columnHover
-                  ? horizontalListSortingStrategy
-                  : verticalListSortingStrategy
-              }
+        <div className="flex">
+          {/*Fixed Cols */}
+          {/* <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragMove={handleDragMove}
+              onDragEnd={handleDragEnd}
+              modifiers={[
+                columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
+              ]}
             >
-              <div className="w-max">
-                {containers
-                  .filter((row, i) => !fixedContainers.includes(row[0].rowId))
-                  .map((row, rowI) => (
-                    <div
-                      key={rowI}
-                      className="flex"
-                      onMouseEnter={() => rowI === 0 && handleHover(true)}
-                      onMouseLeave={() => rowI === 0 && handleHover(false)}
-                    >
-                      {row.map((item, colI) => (
-                        <Items
-                          key={item.id}
-                          id={columnHover ? item.colId : item.rowId}
-                          val={item.data}
-                          itemId={item.id}
-                          isEditMode={isEditMode}
-                          type={columnHover ? "col" : "row"}
-                          indexR={rowI}
-                          indexC={colI}
-                          onChangeHandler={editRowCell}
-                          deleteHandler={deleteRowOrCol}
-                          fixedContainers={fixedContainers}
-                          rowId={item.rowId}
-                          colId={item.colId}
-                          fixed={false}
-                          handelFixedRows={handelFixedRows}
-                        />
-                      ))}
-                    </div>
-                  ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={columnHover ? columnIds : rowIds}
+                strategy={
+                  columnHover
+                    ? horizontalListSortingStrategy
+                    : verticalListSortingStrategy
+                }
+              >
+                <div className="w-max">
+                  {containers
+                    .filter((row, i) => !fixedRowContainers.includes(row[0].rowId))
+                    .map((row, rowI) => (
+                      <div
+                        key={rowI}
+                        className="flex"
+                        onMouseEnter={() => rowI === 0 && handleHover(true)}
+                        onMouseLeave={() => rowI === 0 && handleHover(false)}
+                      >
+                        {row.map((item, colI) => (
+                          <Items
+                            key={item.id}
+                            id={columnHover ? item.colId : item.rowId}
+                            val={item.data}
+                            itemId={item.id}
+                            isEditMode={isEditMode}
+                            type={columnHover ? "col" : "row"}
+                            indexR={rowI}
+                            indexC={colI}
+                            onChangeHandler={editRowCell}
+                            deleteHandler={deleteRowOrCol}
+                            fixedRowContainers={fixedRowContainers}
+                            rowId={item.rowId}
+                            colId={item.colId}
+                            fixed={false}
+                            handelFixedRows={handelFixedRows}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div> */}
+
+          {/*Rest Table */}
+          <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragMove={handleDragMove}
+              onDragEnd={handleDragEnd}
+              modifiers={[
+                columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
+              ]}
+            >
+              <SortableContext
+                items={columnHover ? columnIds : rowIds}
+                strategy={
+                  columnHover
+                    ? horizontalListSortingStrategy
+                    : verticalListSortingStrategy
+                }
+              >
+                <div className="w-max">
+                  {containers
+                    .filter((row, i) => !fixedRowContainers.includes(row[0].rowId))
+                    .map((row, rowI) => (
+                      <div
+                        key={rowI}
+                        className="flex"
+                        onMouseEnter={() => rowI === 0 && handleHover(true)}
+                        onMouseLeave={() => rowI === 0 && handleHover(false)}
+                      >
+                        {row.map((item, colI) => (
+                          <Items
+                            key={item.id}
+                            id={columnHover ? item.colId : item.rowId}
+                            val={item.data}
+                            itemId={item.id}
+                            isEditMode={isEditMode}
+                            type={columnHover ? "col" : "row"}
+                            indexR={rowI}
+                            indexC={colI}
+                            onChangeHandler={editRowCell}
+                            deleteHandler={deleteRowOrCol}
+                            fixedRowContainers={fixedRowContainers}
+                            fixedColContainers={fixedColContainers}
+                            rowId={item.rowId}
+                            colId={item.colId}
+                            fixed={false}
+                            handelFixedRows={handelFixedRows}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
         </div>
       </div>
     </>

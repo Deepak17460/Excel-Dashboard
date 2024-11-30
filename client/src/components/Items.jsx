@@ -20,7 +20,7 @@ const Items = ({
   fixed,
   onChangeHandler,
   deleteHandler,
-  fixedContainers,
+  fixedRowContainers,
   handelFixedRows,
 }) => {
   const {
@@ -73,7 +73,7 @@ const Items = ({
           )}
           {fixed ? (
             <PushPinIcon
-              onClick={() => handelFixedRows(null, fixedContainers[indexR])}
+              onClick={() => handelFixedRows(null, fixedRowContainers[indexR])}
             />
           ) : (
             <PushPinOutlinedIcon onClick={() => handelFixedRows(rowId, null)} />
