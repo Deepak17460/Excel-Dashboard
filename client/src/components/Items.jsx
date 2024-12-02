@@ -47,8 +47,18 @@ const Items = ({
           `}
     >
       <div className={`flex flex-row ${indexR === 0 && "justify-start"}`}>
-        {indexR === 0 && <DragIndicatorIcon {...listeners} />}
-        {indexR !== 0 && indexC === 0 && <DragHandleIcon {...listeners} />}
+        {indexR === 0 && (
+          <DragIndicatorIcon
+            className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+            {...listeners}
+          />
+        )}
+        {indexR !== 0 && indexC === 0 && (
+          <DragHandleIcon
+            className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+            {...listeners}
+          />
+        )}
         {isEditMode ? (
           <input
             className="px-4 py-1 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
