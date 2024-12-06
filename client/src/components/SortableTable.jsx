@@ -21,7 +21,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import {
   restrictToHorizontalAxis,
@@ -29,6 +29,8 @@ import {
 } from "@dnd-kit/modifiers";
 import Items from "./Items";
 import { v4 as uuidv4 } from "uuid";
+import { useSelector, useDispatch } from "react-redux";
+import { initialize, updateCell, undo, redo } from "../redux/tableSlice";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 
@@ -79,6 +81,17 @@ const SortableTable = (props) => {
     );
   });
 
+  const dispatch = useDispatch();
+  const { past, present, future } = useSelector((state) => state.tableData);
+
+  useEffect(() => {
+    dispatch(initialize(initData));
+  }, []);
+  //make shift
+  useEffect(() => {
+    setContainers(present);
+  }, [present]);
+
   const memoizedData = useMemo(() => initData, []);
 
   const initCols = () => memoizedData[0].map((item) => item.colId);
@@ -93,6 +106,24 @@ const SortableTable = (props) => {
   const [fixedRowContainers, setFixedRowContainers] = useState([]);
   const [fixedColContainers, setFixedColContainers] = useState([]);
   //   console.log(containers);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "z") {
+        event.preventDefault();
+        dispatch(undo());
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key === "y") {
+        event.preventDefault();
+        dispatch(redo());
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [dispatch]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -192,13 +223,14 @@ const SortableTable = (props) => {
         break;
       }
     }
-    console.log(val);
-    console.log(id, rowI, colI);
-    newData[rowI][colI] = { ...newData[rowI][colI], data: val };
-    console.log("init val - ", newData[rowI][colI]);
-    console.log("new val - ", val);
-    setContainers(newData);
+ 
+
+    const rowId = newData[rowI][colI].rowId;
+    const colId = newData[rowI][colI].colId;
+    dispatch(updateCell({ rowId, colId, newData: val }));
+
   };
+  console.log("CONTAINERS - ", containers);
 
   const addRow = () => {
     const newData = JSON.parse(JSON.stringify(containers));
