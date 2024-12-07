@@ -94,10 +94,10 @@ const SortableTable = (props) => {
   useEffect(() => {
     dispatch(initialize(initData));
   }, []);
-  //make shift
-  useEffect(() => {
-    setContainers(present);
-  }, [present]);
+  //make shift ISSUE HERE 
+  // useEffect(() => {
+  //   setContainers(present);
+  // }, [present]);
 
   const memoizedData = useMemo(() => initData, []);
 
@@ -234,6 +234,12 @@ const SortableTable = (props) => {
     const rowId = newData[rowI][colI].rowId;
     const colId = newData[rowI][colI].colId;
     dispatch(updateCell({ rowId, colId, newData: val }));
+    console.log(val);
+    console.log(id, rowI, colI);
+    newData[rowI][colI] = { ...newData[rowI][colI], data: val };
+    console.log("init val - ", newData[rowI][colI]);
+    console.log("new val - ", val);
+    setContainers(newData);
   };
   console.log("CONTAINERS - ", containers);
 
