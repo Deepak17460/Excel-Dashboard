@@ -94,10 +94,10 @@ const SortableTable = (props) => {
   useEffect(() => {
     dispatch(initialize(initData));
   }, []);
-  //make shift ISSUE HERE 
-  // useEffect(() => {
-  //   setContainers(present);
-  // }, [present]);
+  //make shift ISSUE HERE
+  useEffect(() => {
+    setContainers(present);
+  }, [present]);
 
   const memoizedData = useMemo(() => initData, []);
 
@@ -258,7 +258,8 @@ const SortableTable = (props) => {
       return [...acc, obj];
     }, []);
     newData.push(newRow);
-    setContainers(newData);
+    dispatch(initialize(newData));
+    // setContainers(newData);
   };
 
   const addCol = () => {
@@ -275,17 +276,20 @@ const SortableTable = (props) => {
       row.push(obj);
     });
     // console.log(newData);
-    setContainers(newData);
+    dispatch(initialize(newData));
+    // setContainers(newData);
   };
 
   const deleteRowOrCol = (row, col, type) => {
     let newData = JSON.parse(JSON.stringify(containers));
     if (type === "row") {
       newData = newData.filter((_, i) => i !== row);
-      setContainers(newData);
+      dispatch(initialize(newData))
+      // setContainers(newData);
     } else {
       newData = newData.map((row) => row.filter((item, i) => i !== col));
-      setContainers(newData);
+      dispatch(initialize(newData))
+      // setContainers(newData);
     }
   };
 

@@ -9,9 +9,9 @@ const tableSlice = createSlice({
   },
   reducers: {
     initialize: (state, action) => {
+      state.past.push(state.present);
       state.present = action.payload;
       console.log('init-', action.payload)
-      state.past = [];
       state.future = [];
     },
 
