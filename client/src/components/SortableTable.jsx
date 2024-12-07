@@ -234,23 +234,24 @@ const SortableTable = (props) => {
     const rowId = newData[rowI][colI].rowId;
     const colId = newData[rowI][colI].colId;
     dispatch(updateCell({ rowId, colId, newData: val }));
-    console.log(val);
-    console.log(id, rowI, colI);
-    newData[rowI][colI] = { ...newData[rowI][colI], data: val };
-    console.log("init val - ", newData[rowI][colI]);
-    console.log("new val - ", val);
-    setContainers(newData);
+    // console.log(val);
+    // console.log(id, rowI, colI);
+    // newData[rowI][colI] = { ...newData[rowI][colI], data: val };
+    // console.log("init val - ", newData[rowI][colI]);
+    // console.log("new val - ", val);
+    // setContainers(newData);
   };
   console.log("CONTAINERS - ", containers);
 
   const addRow = () => {
     const newData = JSON.parse(JSON.stringify(containers));
     const cols = getCols(containers);
-    const len = containers.length;
+    const len = newData.length;
+    const uRowId = getUID();
     const newRow = cols.reduce((acc, c, i) => {
       const obj = {
         id: getUID(),
-        rowId: "row-" + len,
+        rowId: "row-" + uRowId,
         colId: "col-" + i,
         data: "",
       };
@@ -264,15 +265,16 @@ const SortableTable = (props) => {
 
   const addCol = () => {
     let newData = JSON.parse(JSON.stringify(containers));
-    const colLen = containers[0].length;
-
+    const colLen = newData[0].length;
+    const uColId = getUID();
     newData.forEach((row, i) => {
       const obj = {
         id: getUID(),
-        rowId: "row-" + i,
-        colId: "col-" + colLen,
+        rowId: row[0]?.rowId,
+        colId: "col-" + uColId,
         data: "",
       };
+      
       row.push(obj);
     });
     // console.log(newData);
@@ -499,64 +501,6 @@ const SortableTable = (props) => {
           </DndContext>
         </div>
         {/*Fixed Cols */}
-        {/* <div className="flex">
-          <div className="container w-full h-[480px] overflow-auto flex flex-col border border-gray-300 bg-gray-100">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCorners}
-              onDragStart={handleDragStart}
-              onDragMove={handleDragMove}
-              onDragEnd={handleDragEnd}
-              modifiers={[
-                columnHover ? restrictToHorizontalAxis : restrictToVerticalAxis,
-              ]}
-            >
-              <SortableContext
-                items={columnHover ? columnIds : rowIds}
-                strategy={
-                  columnHover
-                    ? horizontalListSortingStrategy
-                    : verticalListSortingStrategy
-                }
-              >
-                <div className="w-max">
-                  {containers
-                    .filter(
-                      (row, i) => !fixedRowContainers.includes(row[0].rowId)
-                    )
-                    .map((row, rowI) => (
-                      <div
-                        key={rowI}
-                        className="flex"
-                        onMouseEnter={() => rowI === 0 && handleHover(true)}
-                        onMouseLeave={() => rowI === 0 && handleHover(false)}
-                      >
-                        {row.map((item, colI) => (
-                          <Items
-                            key={item.id}
-                            id={columnHover ? item.colId : item.rowId}
-                            val={item.data}
-                            itemId={item.id}
-                            isEditMode={isEditMode}
-                            type={columnHover ? "col" : "row"}
-                            indexR={rowI}
-                            indexC={colI}
-                            onChangeHandler={editRowCell}
-                            deleteHandler={deleteRowOrCol}
-                            fixedRowContainers={fixedRowContainers}
-                            rowId={item.rowId}
-                            colId={item.colId}
-                            fixed={false}
-                            handelFixedRows={handelFixedRows}
-                          />
-                        ))}
-                      </div>
-                    ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          </div>
-        </div> */}
       </div>
     </>
   );
