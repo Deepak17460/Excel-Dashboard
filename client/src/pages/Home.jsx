@@ -17,6 +17,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import formatDate from "../utils/dateFormat";
+import toast from "react-hot-toast";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 
@@ -28,7 +29,7 @@ const Home = () => {
   const [editingId, setEditingId] = useState(null);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -54,6 +55,7 @@ const Home = () => {
     } catch (error) {
       console.log(error.response.data);
       setErrMsg(error.response.data.message);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -67,14 +69,16 @@ const Home = () => {
       console.log(res.data);
       const newData = files.filter((item) => item.id !== id);
       setFiles(newData);
+      toast.success("File deleted successfully");
     } catch (error) {
       console.log(error.response.data.message);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   const handleEdit = (id, filename) => {
-    setEditingId(id); 
-    setEditedFilename(filename); 
+    setEditingId(id);
+    setEditedFilename(filename);
   };
 
   const handleSave = async () => {
@@ -87,15 +91,16 @@ const Home = () => {
         { withCredentials: true }
       );
 
-      
       const updatedFiles = files.map((file) =>
         file.id === editingId ? { ...file, filename: editedFilename } : file
       );
       setFiles(updatedFiles);
-      setEditingId(null); 
-      setEditedFilename(""); 
+      setEditingId(null);
+      setEditedFilename("");
+      toast.success("Filename edited successfully!");
     } catch (error) {
       console.error("Error updating filename:", error.response.data.message);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 

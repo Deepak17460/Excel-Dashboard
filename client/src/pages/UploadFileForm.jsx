@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 const validMimeTypes = [
@@ -34,8 +35,10 @@ const UploadFileForm = () => {
       });
       console.log(res.data);
       navigate("/");
+      toast.success("File uploaded successfully!");
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
   return (

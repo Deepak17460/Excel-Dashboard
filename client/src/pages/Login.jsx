@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/login`;
 
@@ -22,6 +23,7 @@ const Login = () => {
     try {
       const res = await axios.post(URL, user, { withCredentials: true });
       navigate("/");
+      toast.success("Logged in!")
     } catch (err) {
       console.log(err);
     }

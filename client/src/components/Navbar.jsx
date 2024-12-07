@@ -2,6 +2,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/logout`;
 
@@ -13,8 +14,10 @@ const Navbar = () => {
       const res = await axios.post(URL, null, { withCredentials: true });
       console.log(res.data);
       navigate("/login");
+      toast.success("Logged out!");
     } catch (error) {
       console.log(error.response.data.message);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 

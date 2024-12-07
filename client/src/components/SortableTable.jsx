@@ -32,6 +32,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
 import { initialize, updateCell, undo, redo } from "../redux/tableSlice";
 import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 
@@ -57,7 +58,7 @@ const convertToPayloadType = (data) => {
 
 const convertToExportType = (data) => {
   const res = data.map((row) => row.map((col) => col.data));
-  return res
+  return res;
 };
 
 const SortableTable = (props) => {
@@ -283,6 +284,10 @@ const SortableTable = (props) => {
   };
 
   const handleSubmit = async () => {
+    const showSuccess = () => toast.success("Changes saved successfully!");
+    const showError = () =>
+      toast.error("Something went wrong :( Please try again.");
+
     try {
       const payload = convertToPayloadType(containers);
       await axios.put(
@@ -290,9 +295,10 @@ const SortableTable = (props) => {
         { data: payload },
         { withCredentials: true }
       );
-      console.log("Edited!");
+      showSuccess();
     } catch (err) {
       console.log(err);
+      showError();
     } finally {
       setIsEditMode(false);
     }
@@ -316,18 +322,27 @@ const SortableTable = (props) => {
   };
 
   const downloadExcel = () => {
+    const showSuccess = () => toast.success("Downloaded syccessfully!");
+    const showError = () =>
+      toast.error("Something went wrong. Please try again.");
+
     try {
-      const fileName = window.prompt("Enter a file name for the Excel file:", "TableData");
+      const fileName = window.prompt(
+        "Enter a file name for the Excel file:",
+        "TableData"
+      );
       const worksheet = XLSX.utils.aoa_to_sheet(
         convertToExportType(containers)
       );
 
-      const workbook = XLSX.utils.book_new(); 
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1"); 
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
-      XLSX.writeFile(workbook, `${fileName ? fileName : 'Sheet'}.xlsx`);
+      XLSX.writeFile(workbook, `${fileName ? fileName : "Sheet"}.xlsx`);
+      showSuccess();
     } catch (error) {
       console.error("Error while exporting the table to Excel:", error);
+      showError();
     }
   };
 
