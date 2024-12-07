@@ -5,7 +5,32 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
+const ControlledInput = (props) => {
+  const { value, onChangeHandler, itemId } = props;
+  const [cursor, setCursor] = useState(null);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const input = ref.current;
+    if (input) input.setSelectionRange(cursor, cursor);
+  }, [ref, cursor, value]);
+
+  const handleChange = (e) => {
+    setCursor(e.target.selectionStart);
+    onChangeHandler && onChangeHandler(itemId, e.target.value);
+  };
+
+  return (
+    <input
+      className="px-4 py-1 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      ref={ref}
+      value={value}
+      onChange={handleChange}
+    />
+  );
+};
 
 const Items = ({
   id,
@@ -60,10 +85,10 @@ const Items = ({
           />
         )}
         {isEditMode ? (
-          <input
-            className="px-4 py-1 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          <ControlledInput
             value={val}
-            onChange={(e) => onChangeHandler(itemId, e.target.value)}
+            onChangeHandler={onChangeHandler}
+            itemId={itemId}
           />
         ) : (
           <h1

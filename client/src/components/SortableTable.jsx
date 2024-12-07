@@ -230,7 +230,7 @@ const SortableTable = (props) => {
         break;
       }
     }
-
+    console.log(id, val)
     const rowId = newData[rowI][colI].rowId;
     const colId = newData[rowI][colI].colId;
     dispatch(updateCell({ rowId, colId, newData: val }));
