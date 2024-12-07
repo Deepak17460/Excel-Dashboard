@@ -31,6 +31,7 @@ import Items from "./Items";
 import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
 import { initialize, updateCell, undo, redo } from "../redux/tableSlice";
+import * as XLSX from "xlsx";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 
@@ -52,6 +53,11 @@ const convertToPayloadType = (data) => {
     });
     return [...acc, obj];
   }, []);
+};
+
+const convertToExportType = (data) => {
+  const res = data.map((row) => row.map((col) => col.data));
+  return res
 };
 
 const SortableTable = (props) => {
@@ -223,12 +229,10 @@ const SortableTable = (props) => {
         break;
       }
     }
- 
 
     const rowId = newData[rowI][colI].rowId;
     const colId = newData[rowI][colI].colId;
     dispatch(updateCell({ rowId, colId, newData: val }));
-
   };
   console.log("CONTAINERS - ", containers);
 
@@ -311,6 +315,22 @@ const SortableTable = (props) => {
     }
   };
 
+  const downloadExcel = () => {
+    try {
+      const fileName = window.prompt("Enter a file name for the Excel file:", "TableData");
+      const worksheet = XLSX.utils.aoa_to_sheet(
+        convertToExportType(containers)
+      );
+
+      const workbook = XLSX.utils.book_new(); 
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1"); 
+
+      XLSX.writeFile(workbook, `${fileName ? fileName : 'Sheet'}.xlsx`);
+    } catch (error) {
+      console.error("Error while exporting the table to Excel:", error);
+    }
+  };
+
   console.log(fixedRowContainers);
   return (
     <>
@@ -333,6 +353,9 @@ const SortableTable = (props) => {
         <>
           <Button onClick={handleEditClick} variant="contained" color="primary">
             Edit
+          </Button>
+          <Button variant="contained" color="success" onClick={downloadExcel}>
+            Export
           </Button>
         </>
       )}
