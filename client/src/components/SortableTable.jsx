@@ -31,7 +31,7 @@ import Items from "./Items";
 import { v4 as uuidv4 } from "uuid";
 import { useSelector, useDispatch } from "react-redux";
 import { initialize, updateCell, undo, redo } from "../redux/tableSlice";
-import * as XLSX from "xlsx";
+import download from "downloadjs";
 import toast from "react-hot-toast";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
@@ -56,10 +56,6 @@ const convertToPayloadType = (data) => {
   }, []);
 };
 
-const convertToExportType = (data) => {
-  const res = data.map((row) => row.map((col) => col.data));
-  return res;
-};
 
 const SortableTable = (props) => {
   const { id } = useParams();
@@ -230,7 +226,7 @@ const SortableTable = (props) => {
         break;
       }
     }
-    console.log(id, val)
+    console.log(id, val);
     const rowId = newData[rowI][colI].rowId;
     const colId = newData[rowI][colI].colId;
     dispatch(updateCell({ rowId, colId, newData: val }));
@@ -274,7 +270,7 @@ const SortableTable = (props) => {
         colId: "col-" + uColId,
         data: "",
       };
-      
+
       row.push(obj);
     });
     // console.log(newData);
@@ -286,11 +282,11 @@ const SortableTable = (props) => {
     let newData = JSON.parse(JSON.stringify(containers));
     if (type === "row") {
       newData = newData.filter((_, i) => i !== row);
-      dispatch(initialize(newData))
+      dispatch(initialize(newData));
       // setContainers(newData);
     } else {
       newData = newData.map((row) => row.filter((item, i) => i !== col));
-      dispatch(initialize(newData))
+      dispatch(initialize(newData));
       // setContainers(newData);
     }
   };
@@ -333,29 +329,32 @@ const SortableTable = (props) => {
     }
   };
 
+  const downloadFile = async (filename) => {
+    try {
+      const response = await axios.get(`${URL}download/${id}`, {
+        responseType: "blob",
+        withCredentials: true,
+      });
+
+      const data = response.data;
+      download(data, filename);
+      toast.success("Downloaded syccessfully!");
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
   const downloadExcel = () => {
     const showSuccess = () => toast.success("Downloaded syccessfully!");
     const showError = () =>
       toast.error("Something went wrong. Please try again.");
 
-    try {
-      const fileName = window.prompt(
-        "Enter a file name for the Excel file:",
-        "TableData"
-      );
-      const worksheet = XLSX.utils.aoa_to_sheet(
-        convertToExportType(containers)
-      );
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-      XLSX.writeFile(workbook, `${fileName ? fileName : "Sheet"}.xlsx`);
-      showSuccess();
-    } catch (error) {
-      console.error("Error while exporting the table to Excel:", error);
-      showError();
-    }
+    const filename = window.prompt(
+      "Enter a file name for the Excel file:",
+      "TableData"
+    );
+    downloadFile(filename);
   };
 
   console.log(fixedRowContainers);

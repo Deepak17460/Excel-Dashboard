@@ -10,6 +10,7 @@ const {
   convertToJson,
   createExcelFile,
   updateFileName,
+  downloadFile,
 } = require("../controllers/spreadsheetController");
 const { verifyUser } = require("../utils/verifyToken");
 
@@ -17,7 +18,7 @@ router.get("/", verifyUser, getAllFileNames);
 
 router.get("/:id", verifyUser, getFileDetails);
 // router.get("/:id", getFileDetails);
-
+router.get('/download/:id', verifyUser, downloadFile);
 router.post("/", verifyUser, upload.single("file"), uploadFile);
 router.post('/create-file', verifyUser, createExcelFile);
 router.put("/:id", verifyUser, editFileDetails);

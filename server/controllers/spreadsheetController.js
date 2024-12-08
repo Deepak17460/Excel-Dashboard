@@ -200,6 +200,26 @@ const updateFileName = async (req, res, next) => {
   }
 };
 
+const downloadFile = async (req, res, next) => {
+  console.log('download file controller')
+  console.log(req.params)
+  const recordId = req.params.id;
+  const fileRecord = await UserToFiles.findByPk(recordId);
+
+  if (!fileRecord) return next(createError(404, "File not found"));
+
+  const filename = fileRecord.filename;
+  const userId = fileRecord.userId;
+  
+  if (req.user.id !== userId)
+    return next(createError(403, "You don't have the required permission"));
+  console.log(__dirname);
+  const _path = path.join(__dirname, "../public/temp/", filename);
+  console.log(_path);
+  // Validate if file exists
+  res.status(200).download(_path, filename);
+};
+
 module.exports = {
   getFileDetails,
   getAllFileNames,
@@ -209,4 +229,5 @@ module.exports = {
   convertToJson,
   createExcelFile,
   updateFileName,
+  downloadFile,
 };
