@@ -67,39 +67,47 @@ const Items = ({
       {...attributes}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
       className={`m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex 
-        justify-between max-w-[300px] max-h-[100px] overflow-auto
+        justify-between w-[300px] h-[70px] overflow-auto flex align-center
         ${isDragging ? "bg-gray-100" : "bg-white"}
           `}
     >
-      <div className={`flex flex-row ${indexR === 0 && "justify-start"}`}>
+      <div
+        className={`flex flex-row w-full justify-between align-center text-center`}
+      >
         {indexR === 0 && (
-          <DragIndicatorIcon
-            className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-            {...listeners}
-          />
+          <div className="flex flex-col justify-center">
+            <DragIndicatorIcon
+              className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+              {...listeners}
+            />
+          </div>
         )}
         {indexR !== 0 && indexC === 0 && (
-          <DragHandleIcon
-            className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-            {...listeners}
-          />
+          <div className="flex flex-col justify-center">
+            <DragHandleIcon
+              className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+              {...listeners}
+            />
+          </div>
         )}
-        {isEditMode ? (
-          <ControlledInput
-            value={val}
-            onChangeHandler={onChangeHandler}
-            itemId={itemId}
-          />
-        ) : (
-          <h1
-            className={`px-4 ${
-              rowId === "row-0" ? "text-2xl font-bold" : "text-xl"
-            }`}
-          >
-            {val}
-          </h1>
-        )}
-        <div className="px-1">
+        <div className="flex flex-col justify-center">
+          {isEditMode ? (
+            <ControlledInput
+              value={val}
+              onChangeHandler={onChangeHandler}
+              itemId={itemId}
+            />
+          ) : (
+            <h1
+              className={`px-4 ${
+                rowId === "row-0" ? "text-2xl font-bold" : "text-xl"
+              }`}
+            >
+              {val}
+            </h1>
+          )}
+        </div>
+        <div className="px-1 flex flex-col justify-center">
           {isEditMode && (indexC === 0 || indexR === 0) && (
             <DeleteRoundedIcon
               onClick={(e) => deleteHandler(indexR, indexC, type)}
