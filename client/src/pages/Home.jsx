@@ -18,8 +18,10 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import formatDate from "../utils/dateFormat";
 import toast from "react-hot-toast";
+import SearchBar from "../components/Search/SearchBar";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
+const QUERY_URL = `${process.env.REACT_APP_SERVER_URL}/util`;
 
 const Home = () => {
   const [files, setFiles] = useState([]);
@@ -98,7 +100,7 @@ const Home = () => {
       // const updatedFiles = files.map((file) =>
       //   file.id === editingId ? { ...file, filename: editedFilename } : file
       // );
-      await fetchData(); 
+      await fetchData();
       // setFiles(updatedFiles);
       setEditingId(null);
       setEditedFilename("");
@@ -109,8 +111,22 @@ const Home = () => {
     }
   };
 
+  const fetchSuggestions = async (query) => {
+    try {
+      const res = await axios.get(QUERY_URL + "/search?key=" + query, {
+        withCredentials: true,
+      });
+      return res.data;
+    } catch (error) {
+      console.log(error.response.data);
+      setErrMsg(error.response.data.message);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <>
+      <SearchBar fetchSuggestions={fetchSuggestions} />
       {files.length > 0 ? (
         <>
           <Paper sx={{ width: "100%", overflow: "hidden" }}>

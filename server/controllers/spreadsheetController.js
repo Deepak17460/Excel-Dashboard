@@ -227,7 +227,7 @@ const getMatchingFileNames = async (req, res, next) => {
     const ans = await UserToFiles.findAll({ where: { userId } });
 
     const transformedData = ans
-      .filter((file) => file.dataValues.filename.includes(searchKey))
+      .filter((file) => file.dataValues.filename.toLowerCase().includes(searchKey.toLowerCase()))
       .map((file) => ({
         id: file.dataValues.id,
         filename: file.dataValues.filename.slice(21),
