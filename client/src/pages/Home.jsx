@@ -64,6 +64,10 @@ const Home = () => {
   };
 
   const deleteRow = async (id) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this file?"
+    );
+    if (!isConfirmed) return;
     try {
       const res = await axios.delete(URL + "/" + id, { withCredentials: true });
       console.log(res.data);
@@ -91,10 +95,11 @@ const Home = () => {
         { withCredentials: true }
       );
 
-      const updatedFiles = files.map((file) =>
-        file.id === editingId ? { ...file, filename: editedFilename } : file
-      );
-      setFiles(updatedFiles);
+      // const updatedFiles = files.map((file) =>
+      //   file.id === editingId ? { ...file, filename: editedFilename } : file
+      // );
+      await fetchData(); 
+      // setFiles(updatedFiles);
       setEditingId(null);
       setEditedFilename("");
       toast.success("Filename edited successfully!");

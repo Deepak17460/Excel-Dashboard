@@ -67,14 +67,14 @@ const Items = ({
       {...attributes}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
       className={`m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex 
-        justify-between w-[300px] h-[70px] overflow-auto flex align-center
+        justify-between min-w-xs w-[320px] max-w-xs h-[70px] overflow-auto flex align-center
         ${isDragging ? "bg-gray-100" : "bg-white"}
           `}
     >
       <div
         className={`flex flex-row w-full justify-between align-center text-center`}
       >
-        {indexR === 0 && (
+        {indexR === 0 && !isEditMode && (
           <div className="flex flex-col justify-center">
             <DragIndicatorIcon
               className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
@@ -82,7 +82,7 @@ const Items = ({
             />
           </div>
         )}
-        {indexR !== 0 && indexC === 0 && (
+        {indexR !== 0 && indexC === 0 && !isEditMode && (
           <div className="flex flex-col justify-center">
             <DragHandleIcon
               className={`${isDragging ? "cursor-grabbing" : "cursor-grab"}`}

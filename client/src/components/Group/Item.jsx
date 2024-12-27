@@ -4,7 +4,7 @@ const Item = ({ val, rowId }) => {
   return (
     <div
       className={`m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex 
-        justify-between max-w-[300px] max-h-[100px] overflow-auto
+        justify-between min-w-xs w-[320px] h-[70px] overflow-auto
         bg-white`}
     >
       <div className={`flex flex-row "justify-start"`}>

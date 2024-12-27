@@ -48,14 +48,13 @@ const convertToPayloadType = (data) => {
   const cols = getCols(data);
   return data.slice(1).reduce((acc, item) => {
     let obj = {};
-    console.log(item);
+    // console.log(item);
     cols.forEach((col, i) => {
       obj = { ...obj, [col]: item[i].data };
     });
     return [...acc, obj];
   }, []);
 };
-
 
 const SortableTable = (props) => {
   const { id } = useParams();
@@ -93,22 +92,26 @@ const SortableTable = (props) => {
   //make shift ISSUE HERE
   useEffect(() => {
     setContainers(present);
+    setColumnIds(present[0]?.map((item) => item.colId));
+    setRowIds(present?.map((row) => row[0].rowId));
   }, [present]);
 
-  const memoizedData = useMemo(() => initData, []);
-
-  const initCols = () => memoizedData[0].map((item) => item.colId);
-  const initRows = () => memoizedData.map((row) => row[0].rowId);
+  // const memoizedData = useMemo(() => initData, []);
+  // NEED THIS AS FN AS containers is not available 🤯
+  const initCols = () => containers[0]?.map((item) => item.colId);
+  const initRows = () => containers?.map((row) => row[0].rowId);
 
   const [containers, setContainers] = useState(initData);
   const [activeId, setActiveId] = useState(null);
   const [columnHover, setColumnHover] = useState(false);
-  const [columnIds, setColumnIds] = useState(initCols);
-  const [rowIds, setRowIds] = useState(initRows);
+  const [columnIds, setColumnIds] = useState(initCols());
+  const [rowIds, setRowIds] = useState(initRows());
   const [isEditMode, setIsEditMode] = useState(props.isEditMode);
   const [fixedRowContainers, setFixedRowContainers] = useState([]);
   const [fixedColContainers, setFixedColContainers] = useState([]);
-  //   console.log(containers);
+  console.log("CONTAINERS - ", containers);
+  // console.log("Col id - ", columnIds);
+  // console.log("row id - ", rowIds);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -180,7 +183,7 @@ const SortableTable = (props) => {
       over &&
       activeId !== over.id
     ) {
-      console.log(activeId, over.id);
+      // console.log(activeId, over.id);
       let activeColIndex = -1;
       containers.forEach((row) => {
         for (let i in row) {
@@ -210,15 +213,16 @@ const SortableTable = (props) => {
     setActiveId(null);
   };
 
-  const handleHover = (isHovering) => {
-    setColumnHover(isHovering);
-  };
+  function handleHover(rowI) {
+    if (rowI === 0) setColumnHover(true);
+    else setColumnHover(false);
+  }
 
   const editRowCell = (id, val) => {
     const newData = JSON.parse(JSON.stringify(containers));
     let rowI = -1;
     let colI = -1;
-    console.log(newData);
+    // console.log(newData);
     for (let i in newData) {
       colI = newData[i].findIndex((item) => item.id === id);
       if (colI !== -1) {
@@ -226,7 +230,7 @@ const SortableTable = (props) => {
         break;
       }
     }
-    console.log(id, val);
+    // console.log(id, val);
     const rowId = newData[rowI][colI].rowId;
     const colId = newData[rowI][colI].colId;
     dispatch(updateCell({ rowId, colId, newData: val }));
@@ -237,7 +241,6 @@ const SortableTable = (props) => {
     // console.log("new val - ", val);
     // setContainers(newData);
   };
-  console.log("CONTAINERS - ", containers);
 
   const addRow = () => {
     const newData = JSON.parse(JSON.stringify(containers));
@@ -279,9 +282,11 @@ const SortableTable = (props) => {
   };
 
   const deleteRowOrCol = (row, col, type) => {
+    console.log("Abt to Delete - ", row, col, type);
     let newData = JSON.parse(JSON.stringify(containers));
     if (type === "row") {
       newData = newData.filter((_, i) => i !== row);
+      console.log("delete row - ", newData);
       dispatch(initialize(newData));
       // setContainers(newData);
     } else {
@@ -357,7 +362,7 @@ const SortableTable = (props) => {
     downloadFile(filename);
   };
 
-  console.log(fixedRowContainers);
+  // console.log(fixedRowContainers);
   return (
     <>
       {isEditMode ? (
@@ -413,8 +418,8 @@ const SortableTable = (props) => {
                     <div
                       key={rowI}
                       className="flex"
-                      onMouseEnter={() => rowI === 0 && handleHover(true)}
-                      onMouseLeave={() => rowI === 0 && handleHover(false)}
+                      onMouseEnter={() => handleHover(rowI)}
+                      onMouseLeave={() => handleHover(rowI)}
                     >
                       {row.map((item, colI) => (
                         <Items
@@ -470,8 +475,8 @@ const SortableTable = (props) => {
                     <div
                       key={rowI}
                       className="flex"
-                      onMouseEnter={() => rowI === 0 && handleHover(true)}
-                      onMouseLeave={() => rowI === 0 && handleHover(false)}
+                      onMouseEnter={() => handleHover(rowI)}
+                      onMouseLeave={() => handleHover(rowI)}
                     >
                       {row.map((item, colI) => (
                         <Items

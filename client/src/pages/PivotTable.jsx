@@ -20,7 +20,7 @@ const PivotTable = (props) => {
       try {
         const data = (await axios.get(URL, { withCredentials: true })).data;
         setFile(data);
-        console.log(data);
+        // console.log(data);
       } catch (err) {
         setErrMsg(err.response.data.message);
       }

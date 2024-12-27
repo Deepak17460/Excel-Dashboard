@@ -102,8 +102,8 @@ const GroupTable = (props) => {
               ))}
             </div>
             {groupedData
-              ? Object.keys(groupedData).map((groupKey) => (
-                  <div key={groupKey}>
+              ? Object.keys(groupedData).map((groupKey, i) => (
+                  <div key={i}>
                     <h1 className="px-4 py-2 text-xl font-bold">
                       Group: {groupKey}
                     </h1>
@@ -146,7 +146,7 @@ const DraggableColumn = ({ id, children }) => {
       ref={setNodeRef}
       style={style}
       className="m-1 px-2 py-2 shadow-md w-full border border-transparent border-2 flex 
-        justify-between max-w-[300px] max-h-[100px] overflow-auto
+        justify-between min-w-xs w-[320px] max-h-[100px] overflow-auto
         bg-white"
       {...attributes}
       {...listeners}

@@ -9,11 +9,12 @@ import Paper from "@mui/material/Paper";
 import { useState, useRef } from "react";
 import { Button } from "@mui/material";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { v4 as uuidv4 } from "uuid";
 import { useEffect } from "react";
 import CheckIcon from "@mui/icons-material/Check";
+import toast from "react-hot-toast";
 
 const DELIMITER = "*/#/^~@!~|+";
 const getUID = () => {
@@ -24,7 +25,7 @@ const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 
 const Test = (props) => {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const [cols, setCols] = useState([]);
   const [data, setData] = useState([]);
   const [filename, setFilename] = useState("");
@@ -138,7 +139,10 @@ const Test = (props) => {
   };
 
   const handleSubmit = async () => {
-    if (!shouldSubmit || filename.length === 0) return; // add toast
+    if (!shouldSubmit || filename.length === 0) {
+      toast.error("Please fill all the required fields");
+      return;
+    } // add toast
     try {
       if (Object.keys(data).length === 0) return;
 
@@ -153,8 +157,11 @@ const Test = (props) => {
         { data: payload },
         { withCredentials: true }
       );
+      navigate("/");
+      toast.success("File created successfully");
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong");
     } finally {
       setIsEditMode(false);
     }

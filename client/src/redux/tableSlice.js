@@ -11,7 +11,6 @@ const tableSlice = createSlice({
     initialize: (state, action) => {
       state.present = action.payload;
       state.past.push(state.present);
-      console.log('init-', action.payload)
       state.future = [];
     },
 
@@ -25,7 +24,7 @@ const tableSlice = createSlice({
             : cell
         )
       );
-      console.log(newPresent)
+      console.log(newPresent);
       state.past.push(state.present);
       state.present = newPresent;
       state.future = [];
