@@ -109,7 +109,6 @@ const Home = () => {
     }
   };
 
-  // only edit that specific row
   return (
     <>
       {files.length > 0 ? (

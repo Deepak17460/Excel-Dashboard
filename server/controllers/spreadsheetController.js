@@ -201,8 +201,8 @@ const updateFileName = async (req, res, next) => {
 };
 
 const downloadFile = async (req, res, next) => {
-  console.log('download file controller')
-  console.log(req.params)
+  console.log("download file controller");
+  console.log(req.params);
   const recordId = req.params.id;
   const fileRecord = await UserToFiles.findByPk(recordId);
 
@@ -210,7 +210,7 @@ const downloadFile = async (req, res, next) => {
 
   const filename = fileRecord.filename;
   const userId = fileRecord.userId;
-  
+
   if (req.user.id !== userId)
     return next(createError(403, "You don't have the required permission"));
   console.log(__dirname);
@@ -218,6 +218,25 @@ const downloadFile = async (req, res, next) => {
   console.log(_path);
   // Validate if file exists
   res.status(200).download(_path, filename);
+};
+
+const getMatchingFileNames = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const searchKey = req.query.key;
+    const ans = await UserToFiles.findAll({ where: { userId } });
+
+    const transformedData = ans
+      .filter((file) => file.dataValues.filename.includes(searchKey))
+      .map((file) => ({
+        id: file.dataValues.id,
+        filename: file.dataValues.filename.slice(21),
+      }));
+
+    res.json(transformedData);
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
@@ -230,4 +249,5 @@ module.exports = {
   createExcelFile,
   updateFileName,
   downloadFile,
+  getMatchingFileNames,
 };
