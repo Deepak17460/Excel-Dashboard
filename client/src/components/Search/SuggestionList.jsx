@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 const SuggestionList = ({
   suggestions,
-  query,
+  query = '',
   showSuggestions,
   setShowSuggestions,
 }) => {
@@ -33,10 +33,10 @@ const SuggestionList = ({
           <div
             key={item.id}
             onClick={() => alert("works")}
-            class="flex border rounded-lg"
+            className="flex border rounded-lg"
           >
-            <ul class="bg-white rounded-lg text-gray-900">
-              <li class="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg">
+            <ul className="bg-white rounded-lg text-gray-900">
+              <li className="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg">
                 {renderFilename(item.filename)}
               </li>
             </ul>

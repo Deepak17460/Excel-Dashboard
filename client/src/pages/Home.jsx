@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -19,6 +19,9 @@ import ClearIcon from "@mui/icons-material/Clear";
 import formatDate from "../utils/dateFormat";
 import toast from "react-hot-toast";
 import SearchBar from "../components/Search/SearchBar";
+import { useDispatch, useSelector } from "react-redux";
+import useDebounce from "../hooks/useDebounce";
+import { updateSearchKey } from "../redux/searchSlice";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 const QUERY_URL = `${process.env.REACT_APP_SERVER_URL}/util`;
@@ -33,6 +36,10 @@ const Home = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const { key: searchKey } = useSelector((state) => state.searchData);
+
+  const dispatch = useDispatch();
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -45,21 +52,26 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
-
+    console.log("Home comp - ", searchKey);
+    debouncedFetchData(searchKey);
     return () => {};
-  }, []);
+  }, [searchKey]);
 
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(URL, { withCredentials: true });
-      setFiles(res.data);
-    } catch (error) {
-      console.log(error.response.data);
-      setErrMsg(error.response.data.message);
-      toast.error("Something went wrong. Please try again.");
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     const res = await axios.get(URL, { withCredentials: true });
+  //     setFiles(res.data);
+  //   } catch (error) {
+  //     console.log(error.response.data);
+  //     setErrMsg(error.response.data.message);
+  //     toast.error("Something went wrong. Please try again.");
+  //   }
+  // };
+
+  const debouncedFetchData = useCallback(
+    useDebounce(fetchSuggestions, 300),
+    []
+  );
 
   const handleClick = (id) => {
     navigate("/view/" + id);
@@ -97,11 +109,8 @@ const Home = () => {
         { withCredentials: true }
       );
 
-      // const updatedFiles = files.map((file) =>
-      //   file.id === editingId ? { ...file, filename: editedFilename } : file
-      // );
-      await fetchData();
-      // setFiles(updatedFiles);
+      dispatch(updateSearchKey(''));
+      
       setEditingId(null);
       setEditedFilename("");
       toast.success("Filename edited successfully!");
@@ -111,18 +120,18 @@ const Home = () => {
     }
   };
 
-  const fetchSuggestions = async (query) => {
+  async function fetchSuggestions(query) {
     try {
       const res = await axios.get(QUERY_URL + "/search?key=" + query, {
         withCredentials: true,
       });
-      return res.data;
+      setFiles(res.data);
     } catch (error) {
       console.log(error.response.data);
       setErrMsg(error.response.data.message);
       toast.error("Something went wrong. Please try again.");
     }
-  };
+  }
 
   return (
     <>
@@ -134,13 +143,11 @@ const Home = () => {
               <Table stickyHeader size="small" aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                    {["S. No. ", "File", "Last Modified", "Actions"].map(
-                      (item, i) => (
-                        <TableCell key={i}>
-                          <h2 className="text-2xl font-bold">{item}</h2>
-                        </TableCell>
-                      )
-                    )}
+                    {["File", "Last Modified", "Actions"].map((item, i) => (
+                      <TableCell key={i}>
+                        <h2 className="text-2xl font-bold">{item}</h2>
+                      </TableCell>
+                    ))}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -154,9 +161,6 @@ const Home = () => {
                           tabIndex={-1}
                           key={item.id}
                         >
-                          <TableCell onClick={() => handleClick(item.id)}>
-                            <h3 className="text-lg">{item.id}</h3>
-                          </TableCell>
                           <TableCell>
                             {editingId === item.id ? (
                               <div className="flex">
