@@ -52,7 +52,6 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Home comp - ", searchKey);
     debouncedFetchData(searchKey);
     return () => {};
   }, [searchKey]);
@@ -109,8 +108,13 @@ const Home = () => {
         { withCredentials: true }
       );
 
-      dispatch(updateSearchKey(''));
-      
+      dispatch(updateSearchKey(searchKey));
+      // Refactor Needed 👇
+      const i = files.findIndex((item) => item.id === editingId);
+      const temp = [...files];
+      temp[i] = { ...files[i], filename: editedFilename };
+      setFiles(temp);
+      // Refactor Needed 👆
       setEditingId(null);
       setEditedFilename("");
       toast.success("Filename edited successfully!");
