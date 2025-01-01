@@ -3,16 +3,20 @@ import axios from "axios";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { removeUserDetails } from "../redux/userSlice";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/logout`;
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
       const res = await axios.post(URL, null, { withCredentials: true });
       console.log(res.data);
+      dispatch(removeUserDetails());
       navigate("/login");
       toast.success("Logged out!");
     } catch (error) {

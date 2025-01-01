@@ -2,8 +2,10 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { storeUserDetails } from "../redux/userSlice";
 
-const URL = `${process.env.REACT_APP_SERVER_URL}/login`;
+const URL = `${process.env.REACT_APP_SERVER_URL}`;
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -12,6 +14,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +24,14 @@ const Login = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(URL, user, { withCredentials: true });
+      const res = await axios.post(URL + "/login", user, {
+        withCredentials: true,
+      });
+      const loggedInUserDetail = await res.data;
+      dispatch(storeUserDetails(loggedInUserDetail));
+
       navigate("/");
-      toast.success("Logged in!")
+      toast.success("Logged in!");
     } catch (err) {
       console.log(err);
     }
