@@ -8,46 +8,46 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateSearchKey } from "../../redux/searchSlice";
 
 const SearchBar = ({ fetchSuggestions }) => {
-  const [value, setValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  // const [value, setValue] = useState("");
+  // const [suggestions, setSuggestions] = useState([]);
+  // const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const ref = useClickOutside(() => setShowSuggestions(false));
+  // const ref = useClickOutside(() => setShowSuggestions(false));
 
   const dispatch = useDispatch();
 
   const { key: searchKey } = useSelector((state) => state.searchData);
 
-  useEffect(() => {
-    setValue(searchKey);
-  }, [searchKey]);
+  // useEffect(() => {
+  //   setValue(searchKey);
+  // }, [searchKey]);
 
-  const getSuggestions = async (key) => {
-    setSuggestions(await fetchSuggestions(key));
-  };
+  // const getSuggestions = async (key) => {
+  //   setSuggestions(await fetchSuggestions(key));
+  // };
 
-  const debouncedGetSuggestions = useCallback(
-    useDebounce(getSuggestions, 300),
-    []
-  );
+  // const debouncedGetSuggestions = useCallback(
+  //   useDebounce(getSuggestions, 300),
+  //   []
+  // );
 
   async function handleOnChange(e) {
     const key = e.target.value;
-    setValue(key);
+    // setValue(key);
     dispatch(updateSearchKey(key));
-    if (key === "") return;
-    debouncedGetSuggestions(key);
+    // if (key === "") return;
+    // debouncedGetSuggestions(key);
   }
 
   function handleSearchInputClear(e) {
-    setValue("");
+    // setValue("");
     dispatch(updateSearchKey(""));
   }
 
   return (
-    <div className="m-4 relative inline-block" ref={ref}>
+    <div className="m-4 relative inline-block" /*ref={ref}*/>
       <InputField
-        value={value}
+        value={searchKey}
         handleOnChange={handleOnChange}
         handleSearchInputClear={handleSearchInputClear}
       />

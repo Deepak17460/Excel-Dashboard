@@ -10,7 +10,12 @@ import {
   TableRow,
 } from "@mui/material";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -37,6 +42,7 @@ const Home = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { key: searchKey } = useSelector((state) => state.searchData);
+  const [reload, setReload] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -54,7 +60,7 @@ const Home = () => {
   useEffect(() => {
     debouncedFetchData(searchKey);
     return () => {};
-  }, [searchKey]);
+  }, [searchKey, reload]);
 
   // const fetchData = async () => {
   //   try {
@@ -109,12 +115,9 @@ const Home = () => {
       );
 
       dispatch(updateSearchKey(searchKey));
-      // Refactor Needed 👇
-      const i = files.findIndex((item) => item.id === editingId);
-      const temp = [...files];
-      temp[i] = { ...files[i], filename: editedFilename };
-      setFiles(temp);
-      // Refactor Needed 👆
+
+      setReload((prev) => !prev);
+
       setEditingId(null);
       setEditedFilename("");
       toast.success("Filename edited successfully!");
