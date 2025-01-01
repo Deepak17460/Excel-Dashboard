@@ -17,7 +17,8 @@ function App() {
         <Route path="/scratch" element={<Test isEditMode={true} />} />
         <Route path="/view/:id" element={<PivotTable isEditMode={false} />} />
         <Route path="/edit/:id" element={<PivotTable isEditMode={true} />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login login={true} />} />
+        <Route path="/register" element={<Login login={false} />} />
       </Routes>
     </div>
   );

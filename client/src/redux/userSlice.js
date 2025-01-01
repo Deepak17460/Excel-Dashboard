@@ -1,8 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+function initUserData() {
+  const user = sessionStorage.getItem("loggedin-user");
+  // console.log("user - ", user);
+  if (!user) return { user: null };
+  return { user: JSON.parse(user) };
+}
+
 const userSlice = createSlice({
   name: "userData",
-  initialState: { user: {} },
+  initialState: initUserData,
   reducers: {
     storeUserDetails: (state, action) => {
       state.user = action.payload;
@@ -10,7 +17,7 @@ const userSlice = createSlice({
       sessionStorage.setItem("loggedin-user", JSON.stringify(state.user));
     },
     removeUserDetails: (state, action) => {
-      state = { user: {} };
+      state.user = action.payload;
       sessionStorage.removeItem("loggedin-user");
     },
   },

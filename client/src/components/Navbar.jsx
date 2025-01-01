@@ -3,7 +3,7 @@ import axios from "axios";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeUserDetails } from "../redux/userSlice";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/logout`;
@@ -11,16 +11,17 @@ const URL = `${process.env.REACT_APP_SERVER_URL}/logout`;
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.userData);
+  console.log(user);
 
   const handleLogout = async () => {
     try {
       const res = await axios.post(URL, null, { withCredentials: true });
       console.log(res.data);
-      dispatch(removeUserDetails());
-      navigate("/login");
+      dispatch(removeUserDetails(null));
       toast.success("Logged out!");
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.response?.data.message);
       toast.error("Something went wrong. Please try again.");
     }
   };
@@ -32,9 +33,11 @@ const Navbar = () => {
           Upload
         </Button>
       </Link>
-      <Button variant="contained" color="secondary" onClick={handleLogout}>
-        Logout
-      </Button>
+      {user && (
+        <Button variant="contained" color="secondary" onClick={handleLogout}>
+          Logout
+        </Button>
+      )}
       <Link to="/scratch">
         <Button variant="contained" color="secondary">
           Scratch

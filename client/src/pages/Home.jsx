@@ -42,6 +42,8 @@ const Home = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { key: searchKey } = useSelector((state) => state.searchData);
+  const { user } = useSelector((state) => state.userData);
+  // console.log(user)
   const [reload, setReload] = useState(false);
 
   const dispatch = useDispatch();
@@ -58,10 +60,14 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    debouncedFetchData(searchKey);
+    if (user) debouncedFetchData(searchKey);
     return () => {};
   }, [searchKey, reload]);
 
+  useEffect(() => {
+    if (!user) setFiles([]);
+    return () => {};
+  }, [user]);
   // const fetchData = async () => {
   //   try {
   //     const res = await axios.get(URL, { withCredentials: true });
@@ -140,6 +146,19 @@ const Home = () => {
     }
   }
 
+  if (!user) {
+    return (
+      <div>
+        <h3>Nothing to show :(</h3>
+        <Link to="/login">
+          <Button variant="contained" color="success">
+            Login
+          </Button>
+        </Link>
+        <h3>{errMsg}</h3>{" "}
+      </div>
+    );
+  }
   return (
     <>
       <SearchBar fetchSuggestions={fetchSuggestions} />
@@ -249,13 +268,7 @@ const Home = () => {
         </>
       ) : (
         <>
-          <h3>Nothing to show :(</h3>
-          <Link to="/login">
-            <Button variant="contained" color="success">
-              Login
-            </Button>
-          </Link>
-          <h3>{errMsg}</h3>
+          <h3>Loading ...</h3>
         </>
       )}
     </>
