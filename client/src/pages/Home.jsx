@@ -164,8 +164,16 @@ const Home = () => {
       <SearchBar fetchSuggestions={fetchSuggestions} />
       {files.length > 0 ? (
         <>
-          <Paper sx={{ width: "100%", overflow: "hidden" }}>
-            <TableContainer sx={{ maxHeight: 415 }}>
+          <Paper
+            sx={{
+              backgroundColor: "#f4f6f8",
+              padding: 0,
+              borderRadius: 3,
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+            }}
+            /*sx={{ width: "100%", overflow: "hidden" }}*/
+          >
+            <TableContainer sx={{ maxHeight: 400 }}>
               <Table stickyHeader size="small" aria-label="sticky table">
                 <TableHead>
                   <TableRow>

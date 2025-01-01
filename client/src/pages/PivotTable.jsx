@@ -4,6 +4,9 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import SortableTable from "../components/SortableTable";
 import GroupTable from "../components/Group/GroupTable";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
+import { Button } from "@mui/material";
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet`;
 
@@ -42,9 +45,21 @@ const PivotTable = (props) => {
   return (
     <div>
       {toggleMode ? (
-        <button onClick={() => setToggleMode(!toggleMode)}>Sort Mode</button>
+        <Button
+          variant="contained"
+          className="bg-emerald-400"
+          onClick={() => setToggleMode(!toggleMode)}
+        >
+          <SwapVertIcon /> Sort Mode
+        </Button>
       ) : (
-        <button onClick={() => setToggleMode(!toggleMode)}>View Mode</button>
+        <Button
+          variant="contained"
+          className="bg-emerald-400"
+          onClick={() => setToggleMode(!toggleMode)}
+        >
+          <VisibilityIcon /> View Mode
+        </Button>
       )}
 
       {toggleMode ? (

@@ -33,6 +33,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { initialize, updateCell, undo, redo } from "../redux/tableSlice";
 import download from "downloadjs";
 import toast from "react-hot-toast";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const URL = `${process.env.REACT_APP_SERVER_URL}/spreadsheet/`;
 
@@ -382,12 +385,22 @@ const SortableTable = (props) => {
         </>
       ) : (
         <>
-          <Button onClick={handleEditClick} variant="contained" color="primary">
+          <EditOutlinedIcon
+            onClick={handleEditClick}
+            fontSize="large"
+            className="text-gray-500 cursor-pointer"
+          />
+          {/* <Button onClick={handleEditClick} variant="contained" color="primary">
             Edit
-          </Button>
-          <Button variant="contained" color="success" onClick={downloadExcel}>
+          </Button> */}
+          <FileDownloadIcon
+            className="text-gray-500 cursor-pointer"
+            fontSize="large"
+            onClick={downloadExcel}
+          />
+          {/* <Button variant="contained" color="success" onClick={downloadExcel}>
             Export
-          </Button>
+          </Button> */}
         </>
       )}
       <div className="flex flex-col items-center justify-center mt-10">
