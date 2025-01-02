@@ -6,6 +6,13 @@ const jwt = require("jsonwebtoken");
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
+    console.log(name, email, password);
+
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email is already in use" });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
@@ -14,8 +21,15 @@ const register = async (req, res, next) => {
       email,
       password: hash,
     });
-    res.status(201).json("User created successfully");
+
+    res.status(201).json({ message: "User created successfully" });
   } catch (error) {
+    console.error("Error during user registration:", error);
+
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({ error: "Email is already in use" });
+    }
+
     next(error);
   }
 };
@@ -27,9 +41,11 @@ const login = async (req, res, next) => {
     if (!user) return next(createError(404, "User not found"));
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
+    console.log(isPasswordMatch);
     if (!isPasswordMatch)
       return next(createError(400, "Username or password dosen't match"));
-    console.log(process.env.JWT_SECRET_KEY);
+
+    //console.log(process.env.JWT_SECRET_KEY);
     const token = jwt.sign(
       { id: user.id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET_KEY
