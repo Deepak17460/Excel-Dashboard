@@ -1,0 +1,11 @@
+**/node_modules/
+**/.env
+**/build/
+*.log
+npm-debug.log*
+.yarn.lock
+.vscode/
+.DS_Store
+Thumbs.db
+package-lock.json
+.env

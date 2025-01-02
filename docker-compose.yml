@@ -19,18 +19,32 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: dpcode72/node_app:${TIMESTAMP}
     container_name: node_app
     ports:
       - "8080:8080"
     depends_on:
       - mysql
     environment:
-      DATABASE_HOST: mysql
-      DATABASE_USER: root
-      DATABASE_PASSWORD: 12345
-      DATABASE_NAME: excel
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     volumes:
       - ./server:/usr/src/app
+    restart: always
+    networks:
+      - backend_network
+
+  react_app:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    image: dpcode72/react_app:${TIMESTAMP}
+    container_name: react_app
+    ports:
+      - "80:80"
     restart: always
     networks:
       - backend_network
