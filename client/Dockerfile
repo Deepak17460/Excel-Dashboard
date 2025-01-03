@@ -1,6 +1,6 @@
 FROM node:16-alpine AS build
 WORKDIR /app
-LABEL maintainer="priya@gmail.com"
+LABEL maintainer="test@gmail.com"
 COPY package*.json ./
 RUN npm ci
 COPY . .

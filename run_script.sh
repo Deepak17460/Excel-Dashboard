@@ -32,16 +32,6 @@ cd client && npm install
 echo "Installing dependencies for the server..."
 cd ../server && npm install
 
-if [ ! -f .env ]; then
-    echo "Setting up environment variables..."
-    cp .env.example .env
-else
-    echo ".env file already exists."
-fi
-
-echo "Running database migrations..."
-npx sequelize-cli db:migrate
-
 echo "Building Docker images for client and server..."
 docker-compose build
 
@@ -49,6 +39,12 @@ echo "Starting all services using Docker Compose..."
 docker-compose up -d
 
 echo "Waiting for MySQL to be fully up..."
-sleep 20
+until docker exec mysql mysqladmin --user=root --password=$DATABASE_PASSWORD --host=mysql --silent --wait=10 ping; do
+    echo "Waiting for MySQL to be ready..."
+    sleep 5
+done
 
-echo "Application started. Please open your browser and go to http://localhost:3000"
+echo "Running database migrations inside the node_app container..."
+docker exec -it node_app npx sequelize-cli db:migrate
+
+echo "Application started. Please open your browser and go to http://99.81.128.143:3000"

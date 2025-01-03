@@ -43,7 +43,6 @@ const Home = () => {
 
   const { key: searchKey } = useSelector((state) => state.searchData);
   const { user } = useSelector((state) => state.userData);
-  // console.log(user)
   const [reload, setReload] = useState(false);
 
   const dispatch = useDispatch();
@@ -68,16 +67,6 @@ const Home = () => {
     if (!user) setFiles([]);
     return () => {};
   }, [user]);
-  // const fetchData = async () => {
-  //   try {
-  //     const res = await axios.get(URL, { withCredentials: true });
-  //     setFiles(res.data);
-  //   } catch (error) {
-  //     console.log(error.response.data);
-  //     setErrMsg(error.response.data.message);
-  //     toast.error("Something went wrong. Please try again.");
-  //   }
-  // };
 
   const debouncedFetchData = useCallback(
     useDebounce(fetchSuggestions, 300),
@@ -95,12 +84,10 @@ const Home = () => {
     if (!isConfirmed) return;
     try {
       const res = await axios.delete(URL + "/" + id, { withCredentials: true });
-      console.log(res.data);
       const newData = files.filter((item) => item.id !== id);
       setFiles(newData);
       toast.success("File deleted successfully");
     } catch (error) {
-      console.log(error.response.data.message);
       toast.error("Something went wrong. Please try again.");
     }
   };
@@ -128,7 +115,6 @@ const Home = () => {
       setEditedFilename("");
       toast.success("Filename edited successfully!");
     } catch (error) {
-      console.error("Error updating filename:", error.response.data.message);
       toast.error("Something went wrong. Please try again.");
     }
   };
@@ -140,7 +126,6 @@ const Home = () => {
       });
       setFiles(res.data);
     } catch (error) {
-      console.log(error.response.data);
       setErrMsg(error.response.data.message);
       toast.error("Something went wrong. Please try again.");
     }
@@ -148,17 +133,66 @@ const Home = () => {
 
   if (!user) {
     return (
-      <div>
-        <h3>Nothing to show :(</h3>
-        <Link to="/login">
-          <Button variant="contained" color="success">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "80vh",
+          background: "linear-gradient(135deg, #e3f2fd, #fce4ec)",
+          borderRadius: "16px",
+          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
+          padding: "20px",
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "2rem",
+            fontWeight: "bold",
+            color: "#757575",
+            marginBottom: "20px",
+            textAlign: "center",
+          }}
+        >
+          Nothing to show :(
+        </h3>
+        <Link to="/login" style={{ textDecoration: "none" }}>
+          <Button
+            variant="contained"
+            color="success"
+            sx={{
+              background: "linear-gradient(135deg, #66bb6a, #43a047)",
+              color: "white",
+              fontSize: "1rem",
+              padding: "10px 20px",
+              borderRadius: "25px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #43a047, #2e7d32)",
+                boxShadow: "0 6px 20px rgba(0, 0, 0, 0.25)",
+                transform: "scale(1.05)",
+              },
+              transition: "all 0.3s ease-in-out",
+            }}
+          >
             Login
           </Button>
         </Link>
-        <h3>{errMsg}</h3>{" "}
+        <h3
+          style={{
+            fontSize: "1rem",
+            color: "#b71c1c",
+            marginTop: "20px",
+            textAlign: "center",
+          }}
+        >
+          {errMsg}
+        </h3>
       </div>
     );
   }
+
   return (
     <>
       <SearchBar fetchSuggestions={fetchSuggestions} />
@@ -171,7 +205,6 @@ const Home = () => {
               borderRadius: 3,
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
             }}
-            /*sx={{ width: "100%", overflow: "hidden" }}*/
           >
             <TableContainer sx={{ maxHeight: 400 }}>
               <Table stickyHeader size="small" aria-label="sticky table">
@@ -187,79 +220,77 @@ const Home = () => {
                 <TableBody>
                   {files
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((item, i) => {
-                      return (
-                        <TableRow
-                          hover
-                          role="checkbox"
-                          tabIndex={-1}
-                          key={item.id}
-                        >
-                          <TableCell>
-                            {editingId === item.id ? (
-                              <div className="flex">
-                                <input
-                                  className="px-4 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  value={editedFilename}
-                                  onChange={(e) =>
-                                    setEditedFilename(e.target.value)
-                                  }
-                                />
-                                <CheckIcon
-                                  onClick={handleSave}
-                                  fontSize="large"
-                                  color="success"
-                                  className="cursor-pointer"
-                                />
-                                <ClearIcon
-                                  onClick={() => setEditingId(null)}
-                                  fontSize="large"
-                                  color="error"
-                                  className="cursor-pointer"
-                                />
-                              </div>
-                            ) : (
-                              <h3
-                                className="text-lg cursor-pointer"
-                                onClick={() => handleClick(item.id)}
-                              >
-                                {item.filename}
-                              </h3>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <h3 className="text-lg">
-                              {formatDate(item.updatedAt)}
-                            </h3>
-                          </TableCell>
-                          <TableCell>
-                            <DeleteForeverRoundedIcon
-                              onClick={() => deleteRow(item.id)}
-                              color="error"
-                              fontSize="large"
-                              className="cursor-pointer"
-                            />
-                            {editingId === item.id ? (
+                    .map((item, i) => (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={item.id}
+                      >
+                        <TableCell>
+                          {editingId === item.id ? (
+                            <div className="flex">
+                              <input
+                                className="px-4 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={editedFilename}
+                                onChange={(e) =>
+                                  setEditedFilename(e.target.value)
+                                }
+                              />
+                              <CheckIcon
+                                onClick={handleSave}
+                                fontSize="large"
+                                color="success"
+                                className="cursor-pointer"
+                              />
                               <ClearIcon
                                 onClick={() => setEditingId(null)}
                                 fontSize="large"
                                 color="error"
                                 className="cursor-pointer"
                               />
-                            ) : (
-                              <EditOutlinedIcon
-                                onClick={() =>
-                                  handleEdit(item.id, item.filename)
-                                }
-                                color="primary"
-                                fontSize="large"
-                                className="cursor-pointer"
-                              />
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                            </div>
+                          ) : (
+                            <h3
+                              className="text-lg cursor-pointer"
+                              onClick={() => handleClick(item.id)}
+                            >
+                              {item.filename}
+                            </h3>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <h3 className="text-lg">
+                            {formatDate(item.updatedAt)}
+                          </h3>
+                        </TableCell>
+                        <TableCell>
+                          <DeleteForeverRoundedIcon
+                            onClick={() => deleteRow(item.id)}
+                            color="error"
+                            fontSize="large"
+                            className="cursor-pointer"
+                          />
+                          {editingId === item.id ? (
+                            <ClearIcon
+                              onClick={() => setEditingId(null)}
+                              fontSize="large"
+                              color="error"
+                              className="cursor-pointer"
+                            />
+                          ) : (
+                            <EditOutlinedIcon
+                              onClick={() =>
+                                handleEdit(item.id, item.filename)
+                              }
+                              color="primary"
+                              fontSize="large"
+                              className="cursor-pointer"
+                            />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -275,9 +306,7 @@ const Home = () => {
           </Paper>
         </>
       ) : (
-        <>
-          <h3>Loading ...</h3>
-        </>
+        <h3>Loading ...</h3>
       )}
     </>
   );

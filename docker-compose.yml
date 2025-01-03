@@ -5,8 +5,8 @@ services:
     image: mysql:latest
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
-      MYSQL_DATABASE: excel
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
     volumes:
       - mysql_data:/var/lib/mysql
     restart: always
@@ -17,12 +17,12 @@ services:
 
   node_server:
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
     image: dpcode72/node_app:${TIMESTAMP}
     container_name: node_app
     ports:
-      - "8080:8080"
+      - "${PORT}:${SERVER_PORT}"
     depends_on:
       - mysql
     environment:
@@ -31,23 +31,29 @@ services:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_NAME: ${DATABASE_NAME}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      PORT: ${SERVER_PORT}
     volumes:
       - ./server:/usr/src/app
     restart: always
     networks:
       - backend_network
+    env_file:
+      - .env
 
   react_app:
     build:
-      context: .
-      dockerfile: client/Dockerfile
+      context: ./client
+      dockerfile: Dockerfile
     image: dpcode72/react_app:${TIMESTAMP}
     container_name: react_app
     ports:
-      - "80:80"
-    restart: always
+      - "8000:80"
+    environment:
+      REACT_APP_SERVER_URL: ${REACT_APP_SERVER_URL}
     networks:
       - backend_network
+    env_file:
+      - .env
 
 volumes:
   mysql_data:
